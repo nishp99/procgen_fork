@@ -164,7 +164,8 @@ class LeaperGame : public BasicAbstractGame {
         }
 
         // water
-        bottom_water_y = bottom_road_y + num_road_lanes + choose_extra_space() + 1;
+        //bottom_water_y = bottom_road_y + num_road_lanes + choose_extra_space() + 1;
+        bottom_water_y = bottom_road_y + num_road_lanes;
         
 
         water_lane_speeds.clear();
