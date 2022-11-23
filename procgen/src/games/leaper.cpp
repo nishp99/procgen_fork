@@ -144,15 +144,19 @@ class LeaperGame : public BasicAbstractGame {
         }
 
         // road
-        bottom_road_y = choose_extra_space() + 1;
+        //bottom_road_y = choose_extra_space() + 1;
+        bottom_road_y = 1;
+
 
         int max_diff = options.distribution_mode == EasyMode ? 3 : 4;
         int difficulty = rand_gen.randn(max_diff + 1);
 
         // half the time we add an extra lane to either roads or water
-        int extra_lane_option = options.distribution_mode == EasyMode ? 0 : rand_gen.randn(4);
+        //int extra_lane_option = options.distribution_mode == EasyMode ? 0 : rand_gen.randn(4);
+        int extra_lane_option = 0;
 
-        int num_road_lanes = difficulty + (extra_lane_option == 2 ? 1 : 0);
+        //int num_road_lanes = difficulty + (extra_lane_option == 2 ? 1 : 0);
+        int num_road_lanes = 2;
         road_lane_speeds.clear();
         for (int lane = 0; lane < num_road_lanes; lane++) {
             road_lane_speeds.push_back(rand_sign() * rand_gen.randrange(min_car_speed, max_car_speed));
@@ -161,9 +165,11 @@ class LeaperGame : public BasicAbstractGame {
 
         // water
         bottom_water_y = bottom_road_y + num_road_lanes + choose_extra_space() + 1;
+        
 
         water_lane_speeds.clear();
-        int num_water_lanes = difficulty + (extra_lane_option == 3 ? 1 : 0);
+        //int num_water_lanes = difficulty + (extra_lane_option == 3 ? 1 : 0);
+        int num_water_lanes = 0;
         int curr_sign = rand_sign();
         for (int lane = 0; lane < num_water_lanes; lane++) {
             water_lane_speeds.push_back(curr_sign * rand_gen.randrange(min_log_speed, max_log_speed));
