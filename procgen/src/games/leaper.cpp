@@ -77,11 +77,15 @@ class LeaperGame : public BasicAbstractGame {
 
     void handle_agent_collision(const std::shared_ptr<Entity> &obj) override {
         if (obj->type == CAR) {
+            std::cout << "hit car\n";
             step_data.done = true;
         } else if (obj->type == FINISH_LINE && agent->vx == 0 && agent->vy == 0) {
+            std::cout << "hit finish, and stationary\n";
             step_data.reward += GOAL_REWARD;
             step_data.done = true;
             step_data.level_complete = true;
+        } else if (obj->type == FINISH_LINE) {
+            std::cout << "hit finish, not stationary\n";
         }
     }
 
@@ -180,10 +184,10 @@ class LeaperGame : public BasicAbstractGame {
         }
 
         goal_y = bottom_water_y + num_water_lanes + 1;
-        std::cout << "bottom road" << bottom_road_y;
-        std::cout << "road lanes" << num_road_lanes;
-        std::cout << "bottom water" << bottom_water_y;
-        std::cout << "water lanes" << num_water_lanes;
+        std::cout << "bottom road" << bottom_road_y << "\n";
+        std::cout << "road lanes" << num_road_lanes << "\n";
+        std::cout << "bottom water" << bottom_water_y << "\n";
+        std::cout << "water lanes" << num_water_lanes << "\n";
         std::cout << "goal_y" << goal_y;
 
         // spawn initial entities
@@ -275,6 +279,7 @@ class LeaperGame : public BasicAbstractGame {
         for (auto &m : entities) {
             if (m->type == LOG && has_collision(agent, m, margin)) {
                 // we're standing on a log, don't die
+                std::cout << "standing on log\n";
                 standing_on_log = true;
                 log_vx = m->vx;
             }
@@ -282,6 +287,7 @@ class LeaperGame : public BasicAbstractGame {
 
         if (get_obj(agent->x, agent->y) == WATER) {
             if (!standing_on_log && agent->vx == 0 && agent->vy == 0) {
+                std::cout << "jumped in water\n";
                 step_data.done = true;
             }
         }
@@ -291,6 +297,7 @@ class LeaperGame : public BasicAbstractGame {
         }
 
         if (is_out_of_bounds(agent)) {
+            std::cout << "jumped out of bounds\n";
             step_data.done = true;
         }
     }
