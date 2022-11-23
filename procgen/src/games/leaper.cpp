@@ -36,6 +36,7 @@ class LeaperGame : public BasicAbstractGame {
         : BasicAbstractGame(NAME) {
         maxspeed = MAX_SPEED;
         timeout = 500;
+        cout << "Default constructor called!";
     }
 
     void load_background_images() override {
