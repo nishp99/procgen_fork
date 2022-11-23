@@ -166,12 +166,12 @@ class LeaperGame : public BasicAbstractGame {
 
         // water
         //bottom_water_y = bottom_road_y + num_road_lanes + choose_extra_space() + 1;
-        bottom_water_y = bottom_road_y + num_road_lanes;
+        bottom_water_y = bottom_road_y + num_road_lanes + 1;
         
 
         water_lane_speeds.clear();
         //int num_water_lanes = difficulty + (extra_lane_option == 3 ? 1 : 0);
-        int num_water_lanes = 0;
+        int num_water_lanes = 1;
         int curr_sign = rand_sign();
         for (int lane = 0; lane < num_water_lanes; lane++) {
             water_lane_speeds.push_back(curr_sign * rand_gen.randrange(min_log_speed, max_log_speed));
