@@ -180,6 +180,7 @@ class LeaperGame : public BasicAbstractGame {
         }
 
         goal_y = bottom_water_y + num_water_lanes + 1;
+        std::cout << goal_y;
 
         // spawn initial entities
         for (int i = 0; i < main_width / std::min(min_car_speed, min_log_speed); i++) {
