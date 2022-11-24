@@ -36,7 +36,6 @@ class LeaperGame : public BasicAbstractGame {
         : BasicAbstractGame(NAME) {
         maxspeed = MAX_SPEED;
         timeout = 500;
-        std::cout << "Default constructor called!";
     }
 
     void load_background_images() override {
@@ -86,6 +85,8 @@ class LeaperGame : public BasicAbstractGame {
             step_data.level_complete = true;
         } else if (obj->type == FINISH_LINE) {
             std::cout << "hit finish, not stationary\n";
+        } else if (obj->type == ROAD){
+            std::cout << "jumped on road\n";
         }
     }
 
