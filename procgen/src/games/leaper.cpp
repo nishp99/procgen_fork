@@ -301,6 +301,9 @@ class LeaperGame : public BasicAbstractGame {
             std::cout << "jumped out of bounds\n";
             step_data.done = true;
         }
+
+        std::cout << "x: " << agent->x << "\n";
+        std::cout << "y: " << agent->y << "\n";
     }
 
     void serialize(WriteBuffer *b) override {
