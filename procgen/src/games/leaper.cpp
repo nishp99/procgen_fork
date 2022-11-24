@@ -176,7 +176,7 @@ class LeaperGame : public BasicAbstractGame {
 
         water_lane_speeds.clear();
         //int num_water_lanes = difficulty + (extra_lane_option == 3 ? 1 : 0);
-        int num_water_lanes = 1;
+        int num_water_lanes = 0;
         int curr_sign = rand_sign();
         for (int lane = 0; lane < num_water_lanes; lane++) {
             water_lane_speeds.push_back(curr_sign * rand_gen.randrange(min_log_speed, max_log_speed));
