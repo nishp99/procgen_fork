@@ -1,6 +1,6 @@
 import gym
 from policy_network import PolicyNetwork
-from update import update_policy
+from update import return_gradient
 import numpy as np
 from procgen import ProcgenEnv
 
@@ -9,10 +9,8 @@ def train(T,k, GAMMA, max_episode_num, max_steps):
     obs = env.reset()
     tobs = env.reset()
     #env.render()
-    policy_net = PolicyNetwork(env.observation_space.shape[0], env.action_space.n, 256)
-
-    #max_episode_num = 5000
-    #max_steps = 10000
+    policy_net = PolicyNetwork(env.observation_space, 2)
+    action_dict = {0:4, 1:5}
     #numsteps = []
     #avg_numsteps = []
     all_rewards = []
@@ -27,6 +25,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps):
         for steps in range(max_steps):
             #env.render()
             action, log_prob = policy_net.get_action(state)
+            action = action_dict[action]
             new_state, reward, done, _ = env.step(action)
             log_probs.append(log_prob)
             rewards.append(reward)
@@ -36,7 +35,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps):
                 if reward:
                     if t%T == 0:
                         all_rewards.append(np.sum(rewards))
-                        update_policy(policy_net, rewards, log_probs, GAMMA)
+                        return_gradient(rewards, log_probs, GAMMA)
                         policy_net.optimizer.step()
                         policy_net.optimizer.zero_grad()
                         t = 0
@@ -44,7 +43,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps):
                         break
                     else:
                         all_rewards.append(np.sum(rewards))
-                        update_policy(policy_net, rewards, log_probs, GAMMA)
+                        return_gradient(rewards, log_probs, GAMMA)
                         break
                 else:
                     if lives == 1:
@@ -54,7 +53,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps):
                         policy_net.optimizer.zero_grad()
                     else:
                         lives -= 1
-                        update_policy(policy_net, rewards, log_probs, GAMMA)
+                        return_gradient(rewards, log_probs, GAMMA)
                         all_rewards.append(np.sum(rewards))
                         break
 

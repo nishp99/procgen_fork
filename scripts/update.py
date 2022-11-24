@@ -25,7 +25,7 @@
 import torch
 import numpy as np
 
-def update_policy(policy_network, rewards, log_probs, GAMMA):
+def return_gradient(rewards, log_probs, GAMMA):
     discounted_rewards = GAMMA*np.ones(len(rewards)) #may have to keep previous formulation, as otherwise get zeros later on
     #there is motivation to remove discount, as would place relatively high value on incorrect moves (when lives remain)
     """
