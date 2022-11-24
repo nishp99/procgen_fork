@@ -304,7 +304,7 @@ class LeaperGame : public BasicAbstractGame {
 
         std::cout << "x: " << agent->x << "\n";
         std::cout << "y: " << agent->y << "\n";
-        std::cout << "v_y: " << agent->v_y << "\n";
+        std::cout << "v_y: " << agent->vy << "\n";
     }
 
     void serialize(WriteBuffer *b) override {
