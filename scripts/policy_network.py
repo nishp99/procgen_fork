@@ -116,7 +116,7 @@ class ImpalaCNN(nn.Module):
         x = x.permute(2, 0, 1)  # NHWC => NCHW
         for conv_seq in self.conv_seqs:
             x = conv_seq(x)
-        x = torch.flatten(x, start_dim=1)
+        x = torch.flatten(x, start_dim=0)
         x = torch.relu(x)
         x = self.hidden_fc(x)
         x = torch.relu(x)
@@ -126,6 +126,9 @@ class ImpalaCNN(nn.Module):
         return dist
 
     def get_action(self, obs):
-        dist = self.forward(obs)
+        obs_tensor = torch.from_numpy(obs)
+        dist = self.forward(obs_tensor)
         action = dist.sample()
+        print(dist.probs)
         return action, dist.log_prob(action)
+

@@ -1,5 +1,5 @@
 import gym
-from policy_network import PolicyNetwork
+from policy_network import ImpalaCNN
 from update import return_gradient
 import numpy as np
 from procgen import ProcgenEnv
@@ -9,7 +9,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps):
     obs = env.reset()
     tobs = env.reset()
     #env.render()
-    policy_net = PolicyNetwork(env.observation_space, 2)
+    policy_net = ImpalaCNN(env.observation_space, 2)
     action_dict = {0:4, 1:5}
     #numsteps = []
     #avg_numsteps = []
@@ -25,7 +25,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps):
         for steps in range(max_steps):
             #env.render()
             action, log_prob = policy_net.get_action(state)
-            action = action_dict[action]
+            action = action_dict[int(action.item())]
             new_state, reward, done, _ = env.step(action)
             log_probs.append(log_prob)
             rewards.append(reward)
