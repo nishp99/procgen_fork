@@ -169,7 +169,7 @@ class LeaperGame : public BasicAbstractGame {
 
         // water
         //bottom_water_y = bottom_road_y + num_road_lanes + choose_extra_space() + 1;
-        bottom_water_y = bottom_road_y + num_road_lanes + 1;
+        bottom_water_y = bottom_road_y + num_road_lanes;
         
 
         water_lane_speeds.clear();
@@ -182,7 +182,9 @@ class LeaperGame : public BasicAbstractGame {
             fill_elem(0, bottom_water_y + lane, main_width, 1, WATER);
         }
 
-        goal_y = bottom_water_y + num_water_lanes + 1;
+        //goal_y = bottom_water_y + num_water_lanes + 1;
+        goal_y = bottom_water_y + num_water_lanes;
+
         std::cout << "bottom road" << bottom_road_y << "\n";
         std::cout << "road lanes" << num_road_lanes << "\n";
         std::cout << "bottom water" << bottom_water_y << "\n";
