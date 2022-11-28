@@ -52,6 +52,14 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr):
                         all_rewards.append(np.sum(rewards))
                         policy_net.optimizer.zero_grad()
                         break
+                    elif t%T == 0:
+                        all_rewards.append(np.sum(rewards))
+                        return_gradient(rewards, log_probs, GAMMA)
+                        policy_net.optimizer.step()
+                        policy_net.optimizer.zero_grad()
+                        t = 0
+                        lives = k
+                        break
                     else:
                         lives -= 1
                         return_gradient(rewards, log_probs, GAMMA)
