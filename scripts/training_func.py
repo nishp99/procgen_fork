@@ -4,12 +4,12 @@ from update import return_gradient
 import numpy as np
 from procgen import ProcgenEnv
 
-def train(T,k, GAMMA, max_episode_num, max_steps):
+def train(T,k, GAMMA, max_episode_num, max_steps, lr):
     env = gym.make("procgen:procgen-leaper-v0")
     obs = env.reset()
     tobs = env.reset()
     #env.render()
-    policy_net = ImpalaCNN(env.observation_space, 2)
+    policy_net = ImpalaCNN(env.observation_space, 2, lr)
     action_dict = {0:4, 1:5}
     #numsteps = []
     #avg_numsteps = []

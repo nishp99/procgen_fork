@@ -89,7 +89,7 @@ class ConvSequence(nn.Module):
 class ImpalaCNN(nn.Module):
     """Network from IMPALA paper, to work with pfrl."""
 
-    def __init__(self, obs_space, num_outputs):
+    def __init__(self, obs_space, num_outputs, learning_rate=3e-4):
 
         super(ImpalaCNN, self).__init__()
 
@@ -109,6 +109,7 @@ class ImpalaCNN(nn.Module):
         # Initialize weights of logits_fc
         nn.init.orthogonal_(self.logits_fc.weight, gain=0.01)
         nn.init.zeros_(self.logits_fc.bias)
+        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
 
     def forward(self, obs):
         assert obs.ndim == 3
