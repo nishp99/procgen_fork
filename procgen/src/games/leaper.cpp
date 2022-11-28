@@ -185,11 +185,11 @@ class LeaperGame : public BasicAbstractGame {
         //goal_y = bottom_water_y + num_water_lanes + 1;
         goal_y = bottom_water_y + num_water_lanes;
 
-        std::cout << "bottom road" << bottom_road_y << "\n";
-        std::cout << "road lanes" << num_road_lanes << "\n";
-        std::cout << "bottom water" << bottom_water_y << "\n";
-        std::cout << "water lanes" << num_water_lanes << "\n";
-        std::cout << "goal_y" << goal_y;
+        //std::cout << "bottom road" << bottom_road_y << "\n";
+        //std::cout << "road lanes" << num_road_lanes << "\n";
+        //std::cout << "bottom water" << bottom_water_y << "\n";
+        //std::cout << "water lanes" << num_water_lanes << "\n";
+        //std::cout << "goal_y" << goal_y;
 
         // spawn initial entities
         for (int i = 0; i < main_width / std::min(min_car_speed, min_log_speed); i++) {
@@ -280,7 +280,7 @@ class LeaperGame : public BasicAbstractGame {
         for (auto &m : entities) {
             if (m->type == LOG && has_collision(agent, m, margin)) {
                 // we're standing on a log, don't die
-                std::cout << "standing on log\n";
+                //std::cout << "standing on log\n";
                 standing_on_log = true;
                 log_vx = m->vx;
             }
@@ -288,7 +288,7 @@ class LeaperGame : public BasicAbstractGame {
 
         if (get_obj(agent->x, agent->y) == WATER) {
             if (!standing_on_log && agent->vx == 0 && agent->vy == 0) {
-                std::cout << "jumped in water\n";
+                //std::cout << "jumped in water\n";
                 step_data.done = true;
             }
         }
@@ -298,13 +298,13 @@ class LeaperGame : public BasicAbstractGame {
         }
 
         if (is_out_of_bounds(agent)) {
-            std::cout << "jumped out of bounds\n";
+            //std::cout << "jumped out of bounds\n";
             step_data.done = true;
         }
 
-        std::cout << "x: " << agent->x << "\n";
-        std::cout << "y: " << agent->y << "\n";
-        std::cout << "v_y: " << agent->vy << "\n";
+        //std::cout << "x: " << agent->x << "\n";
+        //std::cout << "y: " << agent->y << "\n";
+        //std::cout << "v_y: " << agent->vy << "\n";
     }
 
     void serialize(WriteBuffer *b) override {
