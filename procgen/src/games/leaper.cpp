@@ -76,15 +76,15 @@ class LeaperGame : public BasicAbstractGame {
 
     void handle_agent_collision(const std::shared_ptr<Entity> &obj) override {
         if (obj->type == CAR) {
-            std::cout << "hit car\n";
+            //std::cout << "hit car\n";
             step_data.done = true;
         } else if (obj->type == FINISH_LINE && agent->vx == 0 && agent->vy == 0) {
-            std::cout << "hit finish, and stationary\n";
+            //std::cout << "hit finish, and stationary\n";
             step_data.reward += GOAL_REWARD;
             step_data.done = true;
             step_data.level_complete = true;
         } else if (obj->type == FINISH_LINE) {
-            std::cout << "hit finish, not stationary\n";
+            //std::cout << "hit finish, not stationary\n";
         }
     }
 
@@ -169,7 +169,7 @@ class LeaperGame : public BasicAbstractGame {
 
         // water
         //bottom_water_y = bottom_road_y + num_road_lanes + choose_extra_space() + 1;
-        bottom_water_y = bottom_road_y + num_road_lanes + 1;
+        bottom_water_y = bottom_road_y + num_road_lanes;
         
 
         water_lane_speeds.clear();
