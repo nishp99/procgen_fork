@@ -4,16 +4,20 @@ from update import return_gradient
 import numpy as np
 from procgen import ProcgenEnv
 
-def train(T,k, GAMMA, max_episode_num, max_steps, lr):
+def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
+    path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')
+    os.mkdir(path)
     env = gym.make("procgen:procgen-leaper-v0")
-    obs = env.reset()
-    tobs = env.reset()
+    #obs = env.reset()
+    #tobs = env.reset()
     #env.render()
     policy_net = ImpalaCNN(env.observation_space, 2, lr)
     action_dict = {0:4, 1:5}
     #numsteps = []
     #avg_numsteps = []
-    all_rewards = []
+    data = dict()
+    data['rew'] = np.zeros(max_episode_num)
+    data['eps'] = np.zeros(max_episode_num)
     t = 0
     lives = k
 
@@ -34,7 +38,8 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr):
                 t += 1
                 if reward:
                     if t%T == 0:
-                        all_rewards.append(np.sum(rewards))
+                        data['rew'][episode] = np.sum(rewards)
+                        data['eps'][episode] = steps
                         return_gradient(rewards, log_probs, GAMMA)
                         policy_net.optimizer.step()
                         policy_net.optimizer.zero_grad()
@@ -42,18 +47,21 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr):
                         lives = k
                         break
                     else:
-                        all_rewards.append(np.sum(rewards))
+                        data['rew'][episode] = np.sum(rewards)
+                        data['eps'][episode] = steps
                         return_gradient(rewards, log_probs, GAMMA)
                         break
                 else:
                     if lives == 1:
                         t = 0
                         lives = k
-                        all_rewards.append(np.sum(rewards))
+                        data['rew'][episode] = np.sum(rewards)
+                        data['eps'][episode] = steps
                         policy_net.optimizer.zero_grad()
                         break
                     elif t%T == 0:
-                        all_rewards.append(np.sum(rewards))
+                        data['rew'][episode] = np.sum(rewards)
+                        data['eps'][episode] = steps
                         return_gradient(rewards, log_probs, GAMMA)
                         policy_net.optimizer.step()
                         policy_net.optimizer.zero_grad()
@@ -63,23 +71,11 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr):
                     else:
                         lives -= 1
                         return_gradient(rewards, log_probs, GAMMA)
-                        all_rewards.append(np.sum(rewards))
+                        data['rew'][episode] = np.sum(rewards)
+                        data['eps'][episode] = steps
                         break
-
-
-            """if done: #if reward==1, and if t%T == 0
-                update_policy(policy_net, rewards, log_probs)
-                numsteps.append(steps)
-                avg_numsteps.append(np.mean(numsteps[-10:]))
-                all_rewards.append(np.sum(rewards))
-                if episode % 1 == 0:
-                    sys.stdout.write("episode: {}, total reward: {}, average_reward: {}, length: {}\n".format(episode,np.round(np.sum(rewards),decimals=3),np.round(np.mean(all_rewards[-10:]),decimals=3),steps))
-                break"""
 
             state = new_state
 
-    """plt.plot(numsteps)
-    plt.plot(avg_numsteps)
-    plt.xlabel('Episode')
-    plt.show()"""
-    return all_rewards
+    file_path = os.path.join(path, 'dic.npy')
+    np.save(file_path, data)
