@@ -1,8 +1,9 @@
 import gym
-from policy_network import ImpalaCNN
-from update import return_gradient
+#from policy_network import ImpalaCNN
+#from update import return_gradient
 import numpy as np
-from procgen import ProcgenEnv
+#from procgen import ProcgenEnv
+import os
 
 def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
     path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')

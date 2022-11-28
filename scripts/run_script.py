@@ -1,14 +1,16 @@
 import gym
 import numpy as np
-import numpy.random as rnd
-import scipy
-import scipy.special
 import math
 import os
 import submitit
 import datetime
-#from utils import training_func
-from utils/training_func import train
+from utils import training_func
+from utils import policy_network
+from utils.policy_network import *
+from utils.training_func import *
+from procgen import ProcgenEnv
+from utils import update
+from utils.update import *
 import sys
 
 # sys.path.append('utils')
