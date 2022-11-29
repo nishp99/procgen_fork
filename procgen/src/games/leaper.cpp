@@ -36,6 +36,7 @@ class LeaperGame : public BasicAbstractGame {
         : BasicAbstractGame(NAME) {
         maxspeed = MAX_SPEED;
         timeout = 500;
+	std::cout << "created leaper\n";
     }
 
     void load_background_images() override {
@@ -76,15 +77,15 @@ class LeaperGame : public BasicAbstractGame {
 
     void handle_agent_collision(const std::shared_ptr<Entity> &obj) override {
         if (obj->type == CAR) {
-            //std::cout << "hit car\n";
+            std::cout << "hit car\n";
             step_data.done = true;
         } else if (obj->type == FINISH_LINE && agent->vx == 0 && agent->vy == 0) {
-            //std::cout << "hit finish, and stationary\n";
+            std::cout << "hit finish, and stationary\n";
             step_data.reward += GOAL_REWARD;
             step_data.done = true;
             step_data.level_complete = true;
         } else if (obj->type == FINISH_LINE) {
-            //std::cout << "hit finish, not stationary\n";
+            std::cout << "hit finish, not stationary\n";
         }
     }
 
@@ -185,11 +186,11 @@ class LeaperGame : public BasicAbstractGame {
         //goal_y = bottom_water_y + num_water_lanes + 1;
         goal_y = bottom_water_y + num_water_lanes;
 
-        //std::cout << "bottom road" << bottom_road_y << "\n";
-        //std::cout << "road lanes" << num_road_lanes << "\n";
-        //std::cout << "bottom water" << bottom_water_y << "\n";
-        //std::cout << "water lanes" << num_water_lanes << "\n";
-        //std::cout << "goal_y" << goal_y;
+        std::cout << "bottom road" << bottom_road_y << "\n";
+        std::cout << "road lanes" << num_road_lanes << "\n";
+        std::cout << "bottom water" << bottom_water_y << "\n";
+        std::cout << "water lanes" << num_water_lanes << "\n";
+        std::cout << "goal_y" << goal_y;
 
         // spawn initial entities
         for (int i = 0; i < main_width / std::min(min_car_speed, min_log_speed); i++) {
