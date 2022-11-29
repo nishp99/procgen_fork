@@ -9,14 +9,10 @@ import os
 import pdb
 
 def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
-    path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')
-    os.mkdir(path)
     print('about to make leaper')
     pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
     print('made leaper')
-    #obs = env.reset()
-    #tobs = env.reset()
     #env.render()
     policy_net = ImpalaCNN(env.observation_space, 2, lr)
     action_dict = {0:4, 1:5}
@@ -84,5 +80,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
 
             state = new_state
 
+    path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')
+    os.mkdir(path)
     file_path = os.path.join(path, 'dic.npy')
     np.save(file_path, data)
