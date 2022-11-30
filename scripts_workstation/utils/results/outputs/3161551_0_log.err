@@ -1,0 +1,26 @@
+submitit ERROR (2022-11-29 13:26:09,447) - Submitted job triggered an exception
+Traceback (most recent call last):
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/site-packages/submitit/core/_submit.py", line 11, in <module>
+    submitit_main()
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/site-packages/submitit/core/submission.py", line 71, in submitit_main
+    process_job(args.folder)
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/site-packages/submitit/core/submission.py", line 53, in process_job
+    result = delayed.result()
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/site-packages/submitit/core/submission.py", line 53, in process_job
+    result = delayed.result()
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/site-packages/submitit/core/utils.py", line 126, in result
+    self._result = self.function(*self.args, **self.kwargs)
+  File "/nfs/nhome/live/npatel/procgen_experiments/procgen_fork/scripts/utils/training_func.py", line 14, in train
+    env = gym.make("procgen:procgen-leaper-v0")
+  File "/nfs/nhome/live/npatel/procgen_experiments/procgen_fork/scripts/utils/training_func.py", line 14, in train
+    env = gym.make("procgen:procgen-leaper-v0")
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/bdb.py", line 88, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/nfs/nhome/live/npatel/.conda/envs/procgen_fork_local/lib/python3.7/bdb.py", line 113, in dispatch_line
+    if self.quitting: raise BdbQuit
+bdb.BdbQuit
+srun: error: enc1-node1: task 0: Exited with exit code 1

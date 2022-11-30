@@ -1,0 +1,7 @@
+submitit INFO (2022-11-29 11:11:47,154) - Starting with JobEnvironment(job_id=3161520, hostname=enc1-node5, local_rank=0(1), node=0(1), global_rank=0(1))
+submitit INFO (2022-11-29 11:11:47,154) - Loading pickle: /nfs/nhome/live/npatel/procgen_experiments/procgen_fork/scripts/utils/results/outputs/3161520_submitted.pkl
+about to make leaper
+> /nfs/nhome/live/npatel/procgen_experiments/procgen_fork/scripts/utils/training_func.py(16)train()
+-> env = gym.make("procgen:procgen-leaper-v0")
+(Pdb) 
+submitit ERROR (2022-11-29 11:11:48,138) - Submitted job triggered an exception

@@ -1,0 +1,4 @@
+submitit INFO (2022-11-29 10:50:45,129) - Starting with JobEnvironment(job_id=3161501, hostname=enc1-node1, local_rank=0(1), node=0(1), global_rank=0(1))
+submitit INFO (2022-11-29 10:50:45,129) - Loading pickle: /nfs/nhome/live/npatel/procgen_experiments/procgen_fork/scripts/utils/results/outputs/3161501_submitted.pkl
+about to make leaper
+building procgen...done
