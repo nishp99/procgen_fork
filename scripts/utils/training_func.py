@@ -9,10 +9,9 @@ from procgen import ProcgenEnv
 import os
 #import pdb
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(device)
-
 def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(device)
     print('about to make leaper')
     # pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
