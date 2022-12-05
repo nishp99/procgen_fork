@@ -1,4 +1,6 @@
 import gym
+import torch.cuda
+
 #import policy_network
 from scripts_workstation.utils.policy_network import ImpalaCNN
 #import update
