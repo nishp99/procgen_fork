@@ -3,6 +3,7 @@ import gym
 from scripts_workstation.utils.policy_network import ImpalaCNN
 #import update
 from scripts_workstation.utils.update import return_gradient
+from scripts_workstation.utils.framestack import *
 import numpy as np
 from procgen import ProcgenEnv
 import os
@@ -12,6 +13,10 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
     print('about to make leaper')
     #pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
+    """env = ProcgenEnv(num_envs=1, env_name="leaper")
+    env = VecExtractDictObs(env, "rgb")
+    env = TransposeFrame(env)
+    env = ScaledFloatFrame(env)"""
     print('made leaper')
     #env.render()
     policy_net = ImpalaCNN(env.observation_space, 2, lr)
@@ -80,10 +85,10 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
 
             state = new_state
 
-    """path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')
+    path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')
     os.mkdir(path)
     file_path = os.path.join(path, 'dic.npy')
-    np.save(file_path, data)"""
+    np.save(file_path, data)
     R = data['rew']
     R = np.mean(R.reshape(-1, T), axis=1)
     b = (R >= 10*(T+1-k)/T).astype(int)

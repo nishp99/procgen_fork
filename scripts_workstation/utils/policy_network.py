@@ -112,6 +112,7 @@ class ImpalaCNN(nn.Module):
         self.optimizer = optim.SGD(self.parameters(), lr=learning_rate)
 
     def forward(self, obs):
+        #print(obs.shape)
         assert obs.ndim == 3
         x = obs / 255.0  # scale to 0-1
         x = x.permute(2, 0, 1)  # NHWC => NCHW
@@ -127,6 +128,7 @@ class ImpalaCNN(nn.Module):
         return dist
 
     def get_action(self, obs):
+        #print(obs.shape)
         obs_tensor = torch.from_numpy(obs)
         dist = self.forward(obs_tensor)
         action = dist.sample()
