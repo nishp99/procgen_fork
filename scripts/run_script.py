@@ -38,7 +38,7 @@ lr = 3e-4
 
 executor = submitit.AutoExecutor(folder="utils/results/outputs")
 
-executor.update_parameters(timeout_min = 60, mem_gb = 1, gpus_per_node =0, cpus_per_task = 1, slurm_array_parallelism = 256 )
+executor.update_parameters(timeout_min = 60, mem_gb = 1, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 1, slurm_partition = "gpu")
 
 jobs = []
 with executor.batch():

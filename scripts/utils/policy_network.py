@@ -4,7 +4,7 @@ import gym
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
+#import torch.nn.functional as F
 #from torch.autograd import Variable
 #import matplotlib.pyplot as plt
 
@@ -14,7 +14,7 @@ def orthogonal_init(module, gain=nn.init.calculate_gain('relu')):
         nn.init.constant_(module.bias.data, 0)
     return module
 
-class PolicyNetwork(nn.Module):
+"""class PolicyNetwork(nn.Module):
     def __init__(self, num_inputs, num_actions, hidden_size, learning_rate=3e-4):
         super(PolicyNetwork, self).__init__()
 
@@ -33,7 +33,7 @@ class PolicyNetwork(nn.Module):
         probs = self.forward(state)
         highest_prob_action = np.random.choice(self.num_actions, p=np.squeeze(probs.detach().numpy()))
         log_prob = torch.log(probs.squeeze(0)[highest_prob_action])
-        return highest_prob_action, log_prob
+        return highest_prob_action, log_prob"""
 
 
 class ResidualBlock(nn.Module):
@@ -109,7 +109,7 @@ class ImpalaCNN(nn.Module):
         # Initialize weights of logits_fc
         nn.init.orthogonal_(self.logits_fc.weight, gain=0.01)
         nn.init.zeros_(self.logits_fc.bias)
-        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
+        self.optimizer = optim.SGD(self.parameters(), lr=learning_rate)
 
     def forward(self, obs):
         assert obs.ndim == 3
@@ -127,9 +127,9 @@ class ImpalaCNN(nn.Module):
         return dist
 
     def get_action(self, obs):
-        obs_tensor = torch.from_numpy(obs)
+        obs_tensor = (torch.from_numpy(obs)).to(device)
         dist = self.forward(obs_tensor)
         action = dist.sample()
-        print(dist.probs)
+        #print(dist.probs)
         return action, dist.log_prob(action)
 

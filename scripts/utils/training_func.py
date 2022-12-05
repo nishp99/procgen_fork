@@ -1,28 +1,34 @@
 import gym
 #import policy_network
-#from policy_network import ImpalaCNN
+from scripts_workstation.utils.policy_network import ImpalaCNN
 #import update
-#from update import return_gradient
+from scripts_workstation.utils.update import return_gradient
+from scripts_workstation.utils.framestack import *
 import numpy as np
 from procgen import ProcgenEnv
 import os
 #import pdb
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(device)
+
 def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
     print('about to make leaper')
-    #pdb.set_trace()
+    # pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
     print('made leaper')
-    #env.render()
+    # env.render()
     policy_net = ImpalaCNN(env.observation_space, 2, lr)
+    policy_net.to(device)
     action_dict = {0:4, 1:5}
-    #numsteps = []
-    #avg_numsteps = []
+    # numsteps = []
+    # avg_numsteps = []
     data = dict()
     data['rew'] = np.zeros(max_episode_num)
     data['eps'] = np.zeros(max_episode_num)
     t = 0
     lives = k
+    frames = 4
 
     for episode in range(max_episode_num):
         state = env.reset()
@@ -30,10 +36,14 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
         rewards = []
 
         for steps in range(max_steps):
-            #env.render()
+            # env.render()
             action, log_prob = policy_net.get_action(state)
             action = action_dict[int(action.item())]
-            new_state, reward, done, _ = env.step(action)
+            for f in range(frames):
+                new_state, reward, done, _ = env.step(action)
+                if done:
+                    break
+            # new_state, reward, done, _ = env.step(action)
             log_probs.append(log_prob)
             rewards.append(reward)
 
@@ -43,7 +53,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                     if t%T == 0:
                         data['rew'][episode] = np.sum(rewards)
                         data['eps'][episode] = steps
-                        return_gradient(rewards, log_probs, GAMMA)
+                        return_gradient(rewards, log_probs, GAMMA, device)
                         policy_net.optimizer.step()
                         policy_net.optimizer.zero_grad()
                         t = 0
@@ -52,7 +62,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                     else:
                         data['rew'][episode] = np.sum(rewards)
                         data['eps'][episode] = steps
-                        return_gradient(rewards, log_probs, GAMMA)
+                        return_gradient(rewards, log_probs, GAMMA, device)
                         break
                 else:
                     if lives == 1:
@@ -65,7 +75,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                     elif t%T == 0:
                         data['rew'][episode] = np.sum(rewards)
                         data['eps'][episode] = steps
-                        return_gradient(rewards, log_probs, GAMMA)
+                        return_gradient(rewards, log_probs, GAMMA, device)
                         policy_net.optimizer.step()
                         policy_net.optimizer.zero_grad()
                         t = 0
@@ -73,7 +83,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                         break
                     else:
                         lives -= 1
-                        return_gradient(rewards, log_probs, GAMMA)
+                        return_gradient(rewards, log_probs, GAMMA, device)
                         data['rew'][episode] = np.sum(rewards)
                         data['eps'][episode] = steps
                         break
