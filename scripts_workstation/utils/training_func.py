@@ -28,6 +28,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
     data['eps'] = np.zeros(max_episode_num)
     t = 0
     lives = k
+    frames = 4
 
     for episode in range(max_episode_num):
         state = env.reset()
@@ -38,7 +39,11 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
             #env.render()
             action, log_prob = policy_net.get_action(state)
             action = action_dict[int(action.item())]
-            new_state, reward, done, _ = env.step(action)
+            for f in range(frames):
+                new_state, reward, done, _ = env.step(action)
+                if done:
+                    break
+            #new_state, reward, done, _ = env.step(action)
             log_probs.append(log_prob)
             rewards.append(reward)
 
