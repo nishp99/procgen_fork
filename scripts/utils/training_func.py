@@ -6,11 +6,11 @@ import gym
 import numpy as np
 from procgen import ProcgenEnv
 import os
-import pdb
+#import pdb
 
 def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
     print('about to make leaper')
-    pdb.set_trace()
+    #pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
     print('made leaper')
     #env.render()
