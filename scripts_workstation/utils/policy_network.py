@@ -67,7 +67,7 @@ class ConvSequence(nn.Module):
         self.conv = nn.Conv2d(in_channels=self._input_shape[0],
                               out_channels=self._out_channels,
                               kernel_size=3,
-                              padding=1)
+                              padding=1)                      
         self.max_pool2d = nn.MaxPool2d(kernel_size=3,
                                        stride=2,
                                        padding=1)
@@ -93,8 +93,8 @@ class ImpalaCNN(nn.Module):
 
         super(ImpalaCNN, self).__init__()
 
-        h, w, c = obs_space.shape
-        shape = (c, h, w)
+        f, h, w, c = obs_space.shape
+        shape = (f*c, h, w)
 
         conv_seqs = []
         for out_channels in [16, 32, 32]:
@@ -113,9 +113,12 @@ class ImpalaCNN(nn.Module):
 
     def forward(self, obs):
         #print(obs.shape)
-        assert obs.ndim == 3
+        #assert obs.ndim == 3
         x = obs / 255.0  # scale to 0-1
-        x = x.permute(2, 0, 1)  # NHWC => NCHW
+
+        x = x.permute(3, 0, 1, 2)  # FHWC => CFHW
+        x = x.reshape([12,64,64])
+        #print(x.shape)
         for conv_seq in self.conv_seqs:
             x = conv_seq(x)
         x = torch.flatten(x, start_dim=0)
@@ -129,7 +132,8 @@ class ImpalaCNN(nn.Module):
 
     def get_action(self, obs):
         #print(obs.shape)
-        obs_tensor = torch.from_numpy(obs)
+        obs_np = np.array(obs)
+        obs_tensor = torch.from_numpy(obs_np)
         dist = self.forward(obs_tensor)
         action = dist.sample()
         #print(dist.probs)

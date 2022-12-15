@@ -12,6 +12,7 @@ from procgen import ProcgenEnv
 from utils import update
 from utils.update import *
 import sys
+import os
 
 # sys.path.append('utils')
 

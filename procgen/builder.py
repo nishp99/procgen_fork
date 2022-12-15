@@ -97,12 +97,16 @@ def build(package=False, debug=False):
     Build the requested environment in a process-safe manner and only once per process.
     """
     build_dir = os.path.join(SCRIPT_DIR, ".build")
-    os.makedirs(build_dir, exist_ok=True)
 
     build_type = "relwithdebinfo"
     if debug:
         build_type = "debug"
 
+    # if os.path.exists(build_dir):
+    #     pass
+    # else:
+    #     os.makedirs(build_dir, exist_ok=True)
+    os.makedirs(build_dir, exist_ok=True)
     with chdir(build_dir), global_build_lock:
         # check if we have built yet in this process
         if build_type not in global_builds:

@@ -13,6 +13,8 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
     print('about to make leaper')
     #pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
+    env = FrameStack(env,4)
+    #print(env.observation_space)
     """env = ProcgenEnv(num_envs=1, env_name="leaper")
     env = VecExtractDictObs(env, "rgb")
     env = TransposeFrame(env)
@@ -30,10 +32,17 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
     lives = k
     frames = 4
 
+    path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')
+    os.makedirs(path, exist_ok=True)
+    file_path = os.path.join(path, 'dic.npy')
+
     for episode in range(max_episode_num):
         state = env.reset()
         log_probs = []
         rewards = []
+
+        if episode % 10000 == 0:
+            np.save(file_path, data)
 
         for steps in range(max_steps):
             #env.render()
@@ -90,9 +99,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
 
             state = new_state
 
-    path = os.path.join(experiment_path, f'{T}-{k}-{GAMMA}')
-    os.mkdir(path)
-    file_path = os.path.join(path, 'dic.npy')
+    
     np.save(file_path, data)
     R = data['rew']
     R = np.mean(R.reshape(-1, T), axis=1)

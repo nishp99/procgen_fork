@@ -1,5 +1,5 @@
 import gym
-import torch.cuda
+import torch
 
 #import policy_network
 from scripts_workstation.utils.policy_network import ImpalaCNN
@@ -12,8 +12,14 @@ import os
 #import pdb
 
 def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
+    #os.system('module load cuda/11.6')
+    gpu = torch.cuda.get_device_name(0)
+    print(f'gpu:{gpu}')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
+    print(f'is gpu available: {torch.cuda.is_available()}')
+    print(f'device count: {torch.cuda.device_count()}')
+
     print('about to make leaper')
     # pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
