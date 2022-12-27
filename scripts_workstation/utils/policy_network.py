@@ -117,7 +117,7 @@ class ImpalaCNN(nn.Module):
         x = obs / 255.0  # scale to 0-1
 
         x = x.permute(3, 0, 1, 2)  # FHWC => CFHW
-        x = x.reshape([12,64,64])
+        x = x.reshape([15,64,64])
         #print(x.shape)
         for conv_seq in self.conv_seqs:
             x = conv_seq(x)
@@ -130,7 +130,7 @@ class ImpalaCNN(nn.Module):
         #value = self.value_fc(x)
         return dist
 
-    def get_action(self, obs):
+    def get_action_log_prob(self, obs):
         #print(obs.shape)
         obs_np = np.array(obs)
         obs_tensor = torch.from_numpy(obs_np)
@@ -139,3 +139,11 @@ class ImpalaCNN(nn.Module):
         #print(dist.probs)
         return action, dist.log_prob(action)
 
+    def get_action_prob(self, obs):
+        obs_np = np.array(obs)
+        obs_tensor = torch.from_numpy(obs_np)
+        dist = self.forward(obs_tensor)
+        action = dist.sample()
+        log_prob = dist.log_prob(action)
+        #print(dist.probs)
+        return action, torch.exp(log_prob)

@@ -78,6 +78,7 @@ class LeaperGame : public BasicAbstractGame {
     void handle_agent_collision(const std::shared_ptr<Entity> &obj) override {
         if (obj->type == CAR) {
             //std::cout << "hit car\n";
+            step_data.reward += GOAL_REWARD;
             step_data.done = true;
         } else if (obj->type == FINISH_LINE && agent->vx == 0 && agent->vy == 0) {
             //std::cout << "hit finish, and stationary\n";
@@ -130,6 +131,8 @@ class LeaperGame : public BasicAbstractGame {
         options.center_agent = false;
 
         agent->y = agent->ry;
+        agent->x = 8;
+        //added this extra line above to centre the agent upon reset
 
         float min_car_speed = 0.05f;
         float max_car_speed = 0.2f;
@@ -161,10 +164,11 @@ class LeaperGame : public BasicAbstractGame {
         int extra_lane_option = 0;
 
         //int num_road_lanes = difficulty + (extra_lane_option == 2 ? 1 : 0);
-        int num_road_lanes = 2;
+        int num_road_lanes = 3;
         road_lane_speeds.clear();
         for (int lane = 0; lane < num_road_lanes; lane++) {
             road_lane_speeds.push_back(rand_sign() * rand_gen.randrange(min_car_speed, max_car_speed));
+            //road_lane_speeds.push_back(rand_sign() * 0.15);
             fill_elem(0, bottom_road_y + lane, main_width, 1, ROAD);
         }
 
@@ -304,7 +308,7 @@ class LeaperGame : public BasicAbstractGame {
 
         //std::cout << "x: " << agent->x << "\n";
         //std::cout << "y: " << agent->y << "\n";
-        //std::cout << "v_y: " << agent->vy << "\n";
+        //std::cout << "v_x: " << agent->vx << "\n";
     }
 
     void serialize(WriteBuffer *b) override {

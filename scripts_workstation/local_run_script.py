@@ -6,9 +6,9 @@ import numpy as np
 T = 2
 k = 1
 GAMMA = 1
-episodes = 4000000*T
+episodes = 250000*T
 max_steps = 100
-lr = 5e-6
+lr = 1e-5
 
 run_timestamp = datetime.datetime.now().strftime('%Y%m-%d%H-%M%S')
 results_path = os.path.join("scripts_workstation", "utils", "results")
@@ -26,4 +26,4 @@ rewards = train(T, k, GAMMA, episodes, max_steps, lr, run_path)
 
 #os.path.join(results, unique identifier)
 # results_path = os.path.join("utils", "results")
-# os.makedirs(results_path, exist_ok = True)
+# os.makedirs(results_path, exist_ok = True) 
