@@ -22,7 +22,7 @@ def return_gradient(rewards, log_probs, GAMMA):
     discounted_rewards = discounted_rewards[::-1]"""
     discounted_rewards = torch.from_numpy(discounted_rewards.copy())
     #discounted_rewards = rewards[-1]*discounted_rewards
-    discounted_rewards = 10*discounted_rewards
+    discounted_rewards = rewards[-1]*discounted_rewards
     #discounted_rewards = (discounted_rewards - discounted_rewards.mean()) / (
                 #discounted_rewards.std() + 1e-9)  # normalize discounted rewards
 

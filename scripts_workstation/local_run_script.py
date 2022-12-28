@@ -6,7 +6,7 @@ import numpy as np
 T = 2
 k = 1
 GAMMA = 1
-episodes = 250000*T
+episodes = 300000*T
 max_steps = 100
 lr = 1e-5
 

@@ -62,7 +62,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
 
             if done:
                 t += 1
-                if reward:
+                if reward == 10:
                     if t%T == 0:
                         data['rew'][episode] = np.sum(rewards)
                         data['eps'][episode] = steps

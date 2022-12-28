@@ -78,7 +78,7 @@ class LeaperGame : public BasicAbstractGame {
     void handle_agent_collision(const std::shared_ptr<Entity> &obj) override {
         if (obj->type == CAR) {
             //std::cout << "hit car\n";
-            step_data.reward += GOAL_REWARD;
+            step_data.reward -= 1;
             step_data.done = true;
         } else if (obj->type == FINISH_LINE && agent->vx == 0 && agent->vy == 0) {
             //std::cout << "hit finish, and stationary\n";
