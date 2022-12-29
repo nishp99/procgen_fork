@@ -64,7 +64,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                 t += 1
                 if reward == 10:
                     if t%T == 0:
-                        data['rew'][episode] = np.sum(rewards)
+                        data['rew'][episode] = sum(rewards)
                         data['eps'][episode] = steps
                         #return_gradient(rewards, log_probs, GAMMA)
                         return_gradient_entropy(rewards, probs, GAMMA)
@@ -74,7 +74,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                         lives = k
                         break
                     else:
-                        data['rew'][episode] = np.sum(rewards)
+                        data['rew'][episode] = sum(rewards)
                         data['eps'][episode] = steps
                         #return_gradient(rewards, log_probs, GAMMA)
                         return_gradient_entropy(rewards, probs, GAMMA)
@@ -83,12 +83,12 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                     if lives == 1:
                         t = 0
                         lives = k
-                        data['rew'][episode] = np.sum(rewards)
+                        data['rew'][episode] = sum(rewards)
                         data['eps'][episode] = steps
                         policy_net.optimizer.zero_grad()
                         break
                     elif t%T == 0:
-                        data['rew'][episode] = np.sum(rewards)
+                        data['rew'][episode] = sum(rewards)
                         data['eps'][episode] = steps
                         #return_gradient(rewards, log_probs, GAMMA)
                         return_gradient_entropy(rewards, probs, GAMMA)
@@ -101,7 +101,7 @@ def train(T,k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
                         lives -= 1
                         #return_gradient(rewards, log_probs, GAMMA)
                         return_gradient_entropy(rewards, probs, GAMMA)
-                        data['rew'][episode] = np.sum(rewards)
+                        data['rew'][episode] = sum(rewards)
                         data['eps'][episode] = steps
                         break
 
