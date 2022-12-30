@@ -12,7 +12,7 @@ import os
 
 # import pdb
 
-def train(T, k, GAMMA, max_episode_num, max_steps, lr, experiment_path):
+def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
     print('about to make leaper')
     # pdb.set_trace()
     env = gym.make("procgen:procgen-leaper-v0")
@@ -76,10 +76,8 @@ import datetime
 import os
 import numpy as np
 
-T = 2
-k = 1
 GAMMA = 1
-episodes = 300000*T
+episodes = 300000
 max_steps = 100
 lr = 1e-5
 
@@ -91,4 +89,4 @@ os.makedirs(experiment_path, exist_ok = True)
 print(os.getcwd())
 run_path = os.path.join(experiment_path, run_timestamp)
 
-rewards = train(T, k, GAMMA, episodes, max_steps, lr, run_path)
+rewards = train(GAMMA, episodes, max_steps, lr, run_path)
