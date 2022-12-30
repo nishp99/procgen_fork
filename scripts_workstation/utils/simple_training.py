@@ -14,20 +14,15 @@ import os
 
 def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
     print('about to make leaper')
-    # pdb.set_trace()
+
     env = gym.make("procgen:procgen-leaper-v0")
     env = FrameStack(env, 5)
-    # print(env.observation_space)
-    """env = ProcgenEnv(num_envs=1, env_name="leaper")
-    env = VecExtractDictObs(env, "rgb")
-    env = TransposeFrame(env)
-    env = ScaledFloatFrame(env)"""
+
     print('made leaper')
-    # env.render()
+
     policy_net = ImpalaCNN(env.observation_space, 2, lr)
     action_dict = {0: 5, 1: 4}
-    # numsteps = []
-    # avg_numsteps = []
+
     data = dict()
     data['rew'] = np.zeros(max_episode_num)
     data['eps'] = np.zeros(max_episode_num)
@@ -49,7 +44,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
         for steps in range(max_steps):
             # env.render()
             # action, log_prob = policy_net.get_action_log_prob(state)
-            action, prob = policy_net.get_action_prob(state)
+            action, prob = policy_net.get_action_log_prob(state)
             action = action_dict[int(action.item())]
             for f in range(frames):
                 new_state, reward, done, _ = env.step(action)
@@ -58,9 +53,9 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
                     rewards.append(reward)
                     data['rew'][episode] = sum(rewards)
                     data['eps'][episode] = steps
-                    return_gradient_entropy(rewards, probs, GAMMA)
-                    policy_net.optimizer.step()
                     policy_net.optimizer.zero_grad()
+                    return_gradient(rewards, probs, GAMMA)
+                    policy_net.optimizer.step()
                     break
             if done:
                 break
