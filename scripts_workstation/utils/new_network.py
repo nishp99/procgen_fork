@@ -13,8 +13,12 @@ def orthogonal_init(module, gain=nn.init.calculate_gain('relu')):
         nn.init.constant_(module.bias.data, 0)
     return module
 
+class Flatten(nn.Module):
+    def forward(self, x):
+        return x.view(-1)
+
 class NatureModel(nn.Module):
-    def __init__(self, obs_space, in_channels, learning_rate, **kwargs):
+    def __init__(self, obs_space, num_outputs, learning_rate, **kwargs):
         """
         input_shape:  (tuple) tuple of the input dimension shape (channel, height, width)
         filters:       (list) list of the tuples consists of (number of channels, kernel size, and strides)
@@ -24,24 +28,24 @@ class NatureModel(nn.Module):
         f, h, w, c = obs_space.shape
         shape = (f * c, h, w)
         self.layers = nn.Sequential(
-            nn.Conv2d(in_channels=in_channels[0], out_channels=32, kernel_size=8, stride=4), nn.ReLU(),
+            nn.Conv2d(in_channels=shape[0], out_channels=32, kernel_size=8, stride=4), nn.ReLU(),
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2), nn.ReLU(),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1), nn.ReLU(),
             Flatten(),
-            nn.Linear(in_features=64*7*7, out_features=512), nn.ReLU()
+            nn.Linear(in_features=64*4*4, out_features=512), nn.ReLU()
         )
         self.output_dim = 512
         self.apply(orthogonal_init)
-        self.fc_policy = orthogonal_init(nn.Linear(self.output_dim, 2), gain=0.01)
+        self.fc_policy = orthogonal_init(nn.Linear(self.output_dim, num_outputs), gain=0.01)
         self.optimizer = optim.SGD(self.parameters(), lr=learning_rate)
 
-    def forward(self):
+    def forward(self, obs):
         x = obs / 255.0  # scale to 0-1
         x = x.permute(3, 0, 1, 2)  # FHWC => CFHW
         x = x.reshape([15, 64, 64])
         x = self.layers(x)
         logits = self.fc_policy(x)
-        log_probs = F.log_softmax(logits, dim=1)
+        log_probs = F.log_softmax(logits, dim=0)
         p = Categorical(logits=log_probs)
         return p
 

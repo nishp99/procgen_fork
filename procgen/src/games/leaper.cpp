@@ -131,11 +131,13 @@ class LeaperGame : public BasicAbstractGame {
         options.center_agent = false;
 
         agent->y = agent->ry;
-        agent->x = 8;
+        agent->x = std::ceil((main_width+1)/2) ;
         //added this extra line above to centre the agent upon reset
 
-        float min_car_speed = 0.05f;
-        float max_car_speed = 0.2f;
+        //float min_car_speed = 0.05f;
+        //float max_car_speed = 0.2f;
+        float min_car_speed = 0.03f;
+        float max_car_speed = 0.12f;
         float min_log_speed = 0.05f;
         float max_log_speed = 0.1f;
 
@@ -164,7 +166,7 @@ class LeaperGame : public BasicAbstractGame {
         int extra_lane_option = 0;
 
         //int num_road_lanes = difficulty + (extra_lane_option == 2 ? 1 : 0);
-        int num_road_lanes = 3;
+        int num_road_lanes = 4;
         road_lane_speeds.clear();
         for (int lane = 0; lane < num_road_lanes; lane++) {
             road_lane_speeds.push_back(rand_sign() * rand_gen.randrange(min_car_speed, max_car_speed));
