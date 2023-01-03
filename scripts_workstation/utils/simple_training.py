@@ -1,6 +1,7 @@
 import gym
 # import policy_network
 from scripts_workstation.utils.policy_network import ImpalaCNN
+from scripts_workstation.utils.new_network import NatureModel
 # import update
 from scripts_workstation.utils.update import return_gradient
 from scripts_workstation.utils.entropy_update import return_gradient_entropy
@@ -20,7 +21,8 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
 
     print('made leaper')
 
-    policy_net = ImpalaCNN(env.observation_space, 2, lr)
+    #policy_net = ImpalaCNN(env.observation_space, 2, lr)
+    policy_net = NatureModel(env.observation_space, 2, lr)
     action_dict = {0: 5, 1: 4}
 
     data = dict()

@@ -5,8 +5,6 @@ import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-#from torch.autograd import Variable
-#import matplotlib.pyplot as plt
 
 def orthogonal_init(module, gain=nn.init.calculate_gain('relu')):
     if isinstance(module, nn.Linear):
