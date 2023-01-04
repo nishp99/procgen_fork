@@ -36,7 +36,7 @@ print(run_path)
 #T = 4
 #n = 3
 GAMMA = 1
-episodes = 10000
+episodes = 500000
 max_steps = 100
 lr = 1e-5
 
