@@ -40,10 +40,13 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
     data['rew'] = np.zeros(max_episode_num)
     data['eps'] = np.zeros(max_episode_num)
     frames = 5
+    print('ready to train')
 
     path = os.path.join(experiment_path, f'3_lane_simple')
     os.makedirs(path, exist_ok=True)
     file_path = os.path.join(path, 'dic.npy')
+
+    print('made file paths')
 
     for episode in range(max_episode_num):
         state = env.reset()
@@ -54,6 +57,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
         if episode % 10000 == 0:
             np.save(file_path, data)
 
+        print('starting episode')
         for steps in range(max_steps):
             # env.render()
             action, prob = policy_net.get_action_prob(state)
@@ -71,13 +75,14 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
                     policy_net.optimizer.step()
                     break
             if done:
+                print('end episode')
                 break
             # new_state, reward, done, _ = env.step(action)
             # log_probs.append(log_prob)
             probs.append(prob)
             rewards.append(reward)
             state = new_state
-
+            print('continue episode')
     np.save(file_path, data)
 
 """import datetime
