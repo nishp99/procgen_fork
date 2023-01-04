@@ -1,13 +1,16 @@
 import gym
 # import policy_network
-from scripts_workstation.utils.policy_network import ImpalaCNN
-from scripts_workstation.utils.new_network import NatureModel
+#from scripts_workstation.utils.policy_network import ImpalaCNN
+from policy_network import ImpalaCNN
+#from scripts_workstation.utils.new_network import NatureModel
 # import update
-from scripts_workstation.utils.update import return_gradient
-from scripts_workstation.utils.entropy_update import return_gradient_entropy
-from scripts_workstation.utils.framestack import *
+#from scripts_workstation.utils.update import return_gradient
+#from scripts_workstation.utils.entropy_update import return_gradient_entropy
+from entropy_update import return_gradient_entropy
+#from scripts_workstation.utils.framestack import *
+from framestack import *
 import numpy as np
-from procgen import ProcgenEnv
+#from procgen import ProcgenEnv
 import os
 import torch
 

@@ -7,13 +7,13 @@ import datetime
 print(os.getcwd())
 import simple_training
 import policy_network
-from policy_network import *
+#from policy_network import *
 from simple_training import *
-from procgen import ProcgenEnv
-import update
+#from procgen import ProcgenEnv
+#import update
 import entropy_update
-from update import *
-from entropy_update import *
+#from update import *
+#from entropy_update import *
 import sys
 import os
 print(sys.path)
