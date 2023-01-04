@@ -17,7 +17,7 @@ import torch
 
 # import pdb
 
-def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
+def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, full_actions, use_entropy):
     gpu = torch.cuda.get_device_name(0)
     print(f'gpu:{gpu}')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -30,11 +30,16 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
     env = FrameStack(env, 5)
 
     print('made leaper')
+    if full_actions:
+        num_actions = 5
+    else:
+        num_actions = 2
 
-    policy_net = ImpalaCNN(env.observation_space, 2, lr)
+    policy_net = ImpalaCNN(env.observation_space, num_actions, lr)
     #policy_net = NatureModel(env.observation_space, 2, lr)
     policy_net.to(device)
-    action_dict = {0: 5, 1: 4}
+    action_dict = {0:4, 1:5, 2:3, 3:1, 4:7}
+    use_entropy = int(use_entropy)
 
     data = dict()
     data['rew'] = np.zeros(max_episode_num)
@@ -47,34 +52,29 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path):
 
     for episode in range(max_episode_num):
         state = env.reset()
-        log_probs = []
-        probs = []
+        log_probs_entropies = []
         rewards = []
 
         if episode % 10000 == 0:
             np.save(file_path, data)
 
         for steps in range(max_steps):
-            # env.render()
-            action, prob = policy_net.get_action_prob(state, device)
-            #action, prob = policy_net.get_action_log_prob(state, device)
+            action, log_prob, entropy = policy_net.get_action(state, device)
             action = action_dict[int(action.item())]
             for f in range(frames):
                 new_state, reward, done, _ = env.step(action)
                 if done:
-                    probs.append(prob)
+                    log_probs_entropies.append((log_prob, entropy))
                     rewards.append(reward)
                     data['rew'][episode] = sum(rewards)
                     data['eps'][episode] = steps
                     policy_net.optimizer.zero_grad()
-                    return_gradient_entropy(rewards, probs, GAMMA, device)
+                    return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, use_entropy)
                     policy_net.optimizer.step()
                     break
             if done:
                 break
-            # new_state, reward, done, _ = env.step(action)
-            # log_probs.append(log_prob)
-            probs.append(prob)
+            log_probs_entropies.append((log_prob, entropy))
             rewards.append(reward)
             state = new_state
 

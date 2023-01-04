@@ -4,7 +4,6 @@ import math
 import os
 import submitit
 import datetime
-print(os.getcwd())
 import simple_training
 import policy_network
 #from policy_network import *
@@ -16,7 +15,6 @@ import entropy_update
 #from entropy_update import *
 import sys
 import os
-print(sys.path)
 #sys.path.append('utils')
 
 #start timestamp with unique identifier for name
@@ -32,7 +30,6 @@ os.makedirs(experiment_path, exist_ok = True)
 
 run_path = os.path.join(experiment_path, run_timestamp)
 os.mkdir(run_path)
-print(run_path)
 #T = 4
 #n = 3
 GAMMA = 1
@@ -46,5 +43,5 @@ executor.update_parameters(timeout_min = 420, mem_gb = 3, gpus_per_node = 1, cpu
 
 jobs = []
 with executor.batch():
-	job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path = run_path)
+	job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path = run_path, full_actions = True, use_entropy = False)
 	jobs.append(job)
