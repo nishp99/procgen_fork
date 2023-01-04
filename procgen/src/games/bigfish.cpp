@@ -67,7 +67,8 @@ class BigFish : public BasicAbstractGame {
         float start_r = .5;
 
         if (options.distribution_mode == EasyMode) {
-            start_r = 1;
+            //start_r = 1.5;
+            start_r = 1.5;
         }
 
         r_inc = (FISH_MAX_R - start_r) / FISH_QUOTA;
