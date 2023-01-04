@@ -4,15 +4,16 @@ import math
 import os
 import submitit
 import datetime
-from utils import simple_training
-from utils import policy_network
-from utils.policy_network import *
-from utils.training_func import *
+print(os.getcwd())
+import simple_training
+import policy_network
+from policy_network import *
+from training_func import *
 from procgen import ProcgenEnv
-from utils import update
-from utils import entropy_update
-from utils.update import *
-from utils.entropy_update import *
+import update
+import entropy_update
+from update import *
+from entropy_update import *
 import sys
 import os
 
