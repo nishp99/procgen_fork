@@ -80,6 +80,8 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
             state = new_state
 
     np.save(file_path, data)
+    model_path = os.path.join(experiment_path, 'model.pt')
+    torch.save(policy_net.state_dict(), model_path)
 
 """import datetime
 import os

@@ -43,5 +43,5 @@ executor.update_parameters(timeout_min = 420, mem_gb = 3, gpus_per_node = 1, cpu
 
 jobs = []
 with executor.batch():
-	job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path = run_path, num_actions = 3, use_entropy = True, folder_name = 'bigfish_3', game = 'bigfish')
+	job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path = run_path, num_actions = 5, use_entropy = True, folder_name = 'bigfish4fishentallact', game = 'bigfish')
 	jobs.append(job)
