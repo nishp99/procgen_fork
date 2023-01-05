@@ -17,7 +17,7 @@ import torch
 
 # import pdb
 
-def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, full_actions, use_entropy):
+def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, use_entropy, folder_name, game):
     gpu = torch.cuda.get_device_name(0)
     print(f'gpu:{gpu}')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -26,27 +26,28 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, full_actions, 
     print(f'device count: {torch.cuda.device_count()}')
     print('about to make leaper')
 
-    env = gym.make("procgen:procgen-leaper-v0")
-    env = FrameStack(env, 5)
+    game_action_dict = {'leaper': {0:4, 1:5, 2:3, 3:1, 4:7}, 'bigfish': {0:5, 1:3, 2:4, 3:1, 4:7}}
+    frame_dict = {'leaper': 5, 'bigfish': 4}
+
+    action_dict = game_action_dict[game]
+    frames = frame_dict[game]
+    use_entropy = int(use_entropy)
+
+    procgen_dict = {'bigfish': "procgen:procgen-bigfish-v0", 'leaper': "procgen:procgen-leaper-v0"}
+    procgen_game = procgen_dict[game]
+    env = gym.make(procgen_game)
+    env = FrameStack(env, frames)
 
     print('made leaper')
-    if full_actions:
-        num_actions = 5
-    else:
-        num_actions = 2
 
     policy_net = ImpalaCNN(env.observation_space, num_actions, lr)
-    #policy_net = NatureModel(env.observation_space, 2, lr)
     policy_net.to(device)
-    action_dict = {0:4, 1:5, 2:3, 3:1, 4:7}
-    use_entropy = int(use_entropy)
 
     data = dict()
     data['rew'] = np.zeros(max_episode_num)
     data['eps'] = np.zeros(max_episode_num)
-    frames = 5
 
-    path = os.path.join(experiment_path, f'3_lane_simple')
+    path = os.path.join(experiment_path, folder_name)
     os.makedirs(path, exist_ok=True)
     file_path = os.path.join(path, 'dic.npy')
 
@@ -59,7 +60,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, full_actions, 
             np.save(file_path, data)
 
         for steps in range(max_steps):
-            action, log_prob, entropy = policy_net.get_action(state, device)
+            action, log_prob, entropy = policy_net.get_action(state, device, frames)
             action = action_dict[int(action.item())]
             for f in range(frames):
                 new_state, reward, done, _ = env.step(action)

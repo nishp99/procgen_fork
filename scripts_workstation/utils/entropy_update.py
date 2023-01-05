@@ -28,7 +28,7 @@ def return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, use_ent
 
     policy_gradient = []
     for log_prob_entropy, Gt in zip(log_probs_entropies, discounted_rewards):
-        policy_gradient.append(-log_prob_entropy[0] * Gt - 0.1 * use_entropy * log_prob_entropy[1])
+        policy_gradient.append(-log_prob_entropy[0] * Gt - 0.01 * use_entropy * log_prob_entropy[1])
         #policy_gradient.append(-log_prob * Gt + 0.1*(prob*log_prob + (1-prob)*log_prob_neg))
 
     #policy_network.optimizer.zero_grad()

@@ -88,13 +88,13 @@ class ImpalaCNN(nn.Module):
         nn.init.zeros_(self.logits_fc.bias)
         self.optimizer = optim.SGD(self.parameters(), lr=learning_rate)
 
-    def forward(self, obs):
+    def forward(self, obs, frames):
         #print(obs.shape)
         #assert obs.ndim == 3
         x = obs / 255.0  # scale to 0-1
 
         x = x.permute(3, 0, 1, 2)  # FHWC => CFHW
-        x = x.reshape([15,64,64])
+        x = x.reshape([3*frames,64,64])
         #print(x.shape)
         for conv_seq in self.conv_seqs:
             x = conv_seq(x)
@@ -107,20 +107,20 @@ class ImpalaCNN(nn.Module):
         #value = self.value_fc(x)
         return dist
 
-    def get_action(self, obs, device):
+    def get_action(self, obs, device, frames):
         #print(obs.shape)
         obs_np = np.array(obs)
         obs_tensor = (torch.from_numpy(obs_np)).to(device)
-        dist = self.forward(obs_tensor)
+        dist = self.forward(obs_tensor, frames)
         action = dist.sample()
         log_prob = dist.log_prob(action)
         entropy = dist.entropy()
         return action, log_prob, entropy
 
-    def get_action_prob(self, obs, device):
+    def get_action_prob(self, obs, device, frames):
         obs_np = np.array(obs)
         obs_tensor = (torch.from_numpy(obs_np)).to(device)
-        dist = self.forward(obs_tensor)
+        dist = self.forward(obs_tensor, frames)
         action = dist.sample()
         log_prob = dist.log_prob(action)
         #print(dist.probs)

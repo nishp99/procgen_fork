@@ -11,9 +11,11 @@ const int POSITIVE_REWARD = 1.0f;
 const int FISH = 2;
 
 const float FISH_MIN_R = .25;
-const float FISH_MAX_R = 2;
+//const float FISH_MAX_R = 2;
+const float FISH_MAX_R = 1.5;
 
-const int FISH_QUOTA = 30;
+//const int FISH_QUOTA = 30;
+const int FISH_QUOTA = 3;
 
 class BigFish : public BasicAbstractGame {
   public:
@@ -49,7 +51,7 @@ class BigFish : public BasicAbstractGame {
             if (obj->rx > agent->rx) {
                 step_data.done = true;
             } else {
-                step_data.reward += POSITIVE_REWARD;
+                //step_data.reward += POSITIVE_REWARD;
                 obj->will_erase = true;
                 agent->rx += r_inc;
                 agent->ry += r_inc;
@@ -64,25 +66,28 @@ class BigFish : public BasicAbstractGame {
         options.center_agent = false;
         fish_eaten = 0;
 
-        float start_r = .5;
+        float start_r = 1;
+        //float start_r = .5;
 
         if (options.distribution_mode == EasyMode) {
-            //start_r = 1.5;
-            start_r = 1.5;
+            start_r = 1;
         }
 
         r_inc = (FISH_MAX_R - start_r) / FISH_QUOTA;
 
         agent->rx = start_r;
         agent->ry = start_r;
-        agent->y = 1 + agent->ry;
+        //agent->y = 1 + agent->ry;
+        agent->y = main_height/2 + rand_gen.randrange(-2,2);
+        agent->x = main_width/2;
     }
 
     void game_step() override {
         BasicAbstractGame::game_step();
 
         if (rand_gen.randn(10) == 1) {
-            float ent_r = (FISH_MAX_R - FISH_MIN_R) * pow(rand_gen.rand01(), 1.4) + FISH_MIN_R;
+            //float ent_r = (FISH_MAX_R - FISH_MIN_R) * pow(rand_gen.rand01(), 1.4) + FISH_MIN_R;
+            float ent_r = (1.8 - FISH_MIN_R) * pow(rand_gen.rand01(), 1.4) + FISH_MIN_R;
             float ent_y = rand_gen.rand01() * (main_height - 2 * ent_r);
             float moves_right = rand_gen.rand01() < .5;
             float ent_vx = (.15 + rand_gen.rand01() * .25) * (moves_right ? 1 : -1);
