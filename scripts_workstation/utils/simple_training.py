@@ -18,12 +18,13 @@ import torch
 # import pdb
 
 def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, use_entropy, folder_name, game):
-    gpu = torch.cuda.get_device_name(0)
-    print(f'gpu:{gpu}')
+    print(torch.cuda.device_count())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
     print(f'is gpu available: {torch.cuda.is_available()}')
     print(f'device count: {torch.cuda.device_count()}')
+    #gpu = torch.cuda.get_device_name(0)
+    #print(f'gpu:{gpu}')
     print('about to make leaper')
 
     game_action_dict = {'leaper': {0:4, 1:5, 2:3, 3:1, 4:7}, 'bigfish': {0:5, 1:3, 2:4, 3:1, 4:7}}

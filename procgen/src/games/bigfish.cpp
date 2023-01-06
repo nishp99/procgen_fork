@@ -49,6 +49,8 @@ class BigFish : public BasicAbstractGame {
 
         if (obj->type == FISH) {
             if (obj->rx > agent->rx) {
+                //
+                step_data.reward -= 0.1;
                 step_data.done = true;
             } else {
                 //step_data.reward += POSITIVE_REWARD;
