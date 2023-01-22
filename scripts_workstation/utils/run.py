@@ -32,16 +32,34 @@ run_path = os.path.join(experiment_path, run_timestamp)
 os.mkdir(run_path)
 #T = 4
 #n = 3
-GAMMA = 0.9
+
 episodes = 250000
-max_steps = 200
+max_steps = 300
 lr = 1e-5
 
 executor = submitit.AutoExecutor(folder="utils/results/outputs")
 
-executor.update_parameters(timeout_min = 2400, mem_gb = 3, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 1, slurm_partition = "gpu")
+executor.update_parameters(timeout_min = 2400, mem_gb = 3, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 256, slurm_partition = "gpu")
 
 jobs = []
+
+entropy_factors = [0, 0.01, 0.1, 0.6, 1, 10, 100]
+entropy_names = {0:'0', 0.01:'001', 0.1:'01', 0.6:'06', 1:'1', 10:'10', 100:'100'}
+
+GAMMAS = [0.9]
+GAMMA_names = {0.9:'09'}
+
+games = ['leaper', 'bigfish']
+game_folder_name = {'leaper': 'leaper4lane', 'bigfish': 'bigfish3fish'}
+
+game_actions = ['reduced', 'all']
+action_numbers = {'leaper': {'reduced': 2, 'all': 5}, 'bigfish': {'reduced': 3, 'all': 5}}
+
 with executor.batch():
-	job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path = run_path, num_actions = 2, use_entropy = True, folder_name = 'leaper4laneall2entgamma09', game = 'leaper')
-	jobs.append(job)
+	for GAMMA in GAMMAS:
+		for entropy_factor in entropy_factors:
+			for game in games:
+				for actions in game_actions:
+					folder = f'{game_folder_name[game]}{actions}act{actions}ent{entropy_names[entropy_factor]}gamma{GAMMA_names[GAMMA]}'
+					job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path=run_path, num_actions=action_numbers[game][actions], entropy_factor=entropy_factor, folder_name=folder, game=game)
+					jobs.append(job)

@@ -17,7 +17,7 @@ import torch
 
 # import pdb
 
-def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, use_entropy, folder_name, game):
+def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, entropy_factor, folder_name, game):
     print(torch.cuda.device_count())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -32,7 +32,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
 
     action_dict = game_action_dict[game]
     frames = frame_dict[game]
-    use_entropy = int(use_entropy)
+    #use_entropy = int(use_entropy)
 
     procgen_dict = {'bigfish': "procgen:procgen-bigfish-v0", 'leaper': "procgen:procgen-leaper-v0"}
     procgen_game = procgen_dict[game]
@@ -40,7 +40,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
     env = FrameStack(env, frames)
 
     print('made leaper')
-    model_path = os.path.join(experiment_path, 'model.pt')
+    #model_path = os.path.join(experiment_path, 'model.pt')
 
     policy_net = ImpalaCNN(env.observation_space, num_actions, lr)
     policy_net.to(device)
@@ -51,6 +51,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
 
     path = os.path.join(experiment_path, folder_name)
     os.makedirs(path, exist_ok=True)
+    model_path = os.path.join(path, 'model.pt')
     file_path = os.path.join(path, 'dic.npy')
 
     for episode in range(max_episode_num):
@@ -74,7 +75,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
                     data['rew'][episode] = sum(rewards)
                     data['eps'][episode] = steps
                     policy_net.optimizer.zero_grad()
-                    return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, use_entropy)
+                    return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, entropy_factor)
                     policy_net.optimizer.step()
                     break
             if done:
@@ -84,6 +85,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
             state = new_state
 
     np.save(file_path, data)
+    torch.save(policy_net.state_dict(), model_path)
 
 """import datetime
 import os
