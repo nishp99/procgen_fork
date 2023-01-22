@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-def return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, entropy_factor):
+def return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, entropy_factor, normalize_reward):
     discounted_rewards = GAMMA*np.ones(len(rewards)) #may have to keep previous formulation, as otherwise get zeros later on
     #there is motivation to remove discount, as would place relatively high value on incorrect moves (when lives remain)
 
@@ -22,8 +22,8 @@ def return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, entropy
     discounted_rewards = discounted_rewards[::-1]
     discounted_rewards = (torch.from_numpy(discounted_rewards.copy())).to(device)
     discounted_rewards = rewards[-1]*discounted_rewards
-    #discounted_rewards = (discounted_rewards - discounted_rewards.mean()) / (
-                #discounted_rewards.std() + 1e-9)  # normalize discounted rewards
+    if normalize_reward:
+        discounted_rewards = (discounted_rewards - discounted_rewards.mean()) / (discounted_rewards.std() + 1e-9)  # normalize discounted rewards
 
     policy_gradient = []
     for log_prob_entropy, Gt in zip(log_probs_entropies, discounted_rewards):

@@ -17,7 +17,7 @@ import torch
 
 # import pdb
 
-def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, entropy_factor, folder_name, game):
+def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, entropy_factor, folder_name, game, zero_rewards, zero_observations):
     print(torch.cuda.device_count())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -56,6 +56,10 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, e
 
     for episode in range(max_episode_num):
         state = env.reset()
+        state = state / 255.0
+        if zero_observations:
+            state = (state - np.mean(state, axis=(1,2), keepdims=True))/np.var(state, axis=(1,2), keepdims=True)
+
         log_probs_entropies = []
         rewards = []
 
@@ -75,14 +79,16 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, e
                     data['rew'][episode] = sum(rewards)
                     data['eps'][episode] = steps
                     policy_net.optimizer.zero_grad()
-                    return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, entropy_factor)
+                    return_gradient_entropy(rewards, log_probs_entropies, GAMMA, device, entropy_factor, zero_rewards)
                     policy_net.optimizer.step()
                     break
             if done:
                 break
             log_probs_entropies.append((log_prob, entropy))
             rewards.append(reward)
-            state = new_state
+            state = new_state/255.0
+            if zero_observations:
+                state = (state - np.mean(state, axis=(1, 2), keepdims=True))/np.var(state, axis=(1,2), keepdims=True)
 
     np.save(file_path, data)
     torch.save(policy_net.state_dict(), model_path)

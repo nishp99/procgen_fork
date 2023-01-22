@@ -91,7 +91,7 @@ class ImpalaCNN(nn.Module):
     def forward(self, obs, frames):
         #print(obs.shape)
         #assert obs.ndim == 3
-        x = obs / 255.0  # scale to 0-1
+        #x = obs / 255.0  # scale to 0-1
 
         x = x.permute(3, 0, 1, 2)  # FHWC => CFHW
         x = x.reshape([3*frames,64,64])
