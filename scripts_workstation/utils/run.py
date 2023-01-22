@@ -32,16 +32,16 @@ run_path = os.path.join(experiment_path, run_timestamp)
 os.mkdir(run_path)
 #T = 4
 #n = 3
-GAMMA = 1
+GAMMA = 0.9
 episodes = 250000
 max_steps = 200
 lr = 1e-5
 
 executor = submitit.AutoExecutor(folder="utils/results/outputs")
 
-executor.update_parameters(timeout_min = 1200, mem_gb = 3, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 1, slurm_partition = "gpu")
+executor.update_parameters(timeout_min = 2400, mem_gb = 3, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 1, slurm_partition = "gpu")
 
 jobs = []
 with executor.batch():
-	job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path = run_path, num_actions = 5, use_entropy = True, folder_name = 'bigfish3fishent3actneg', game = 'bigfish')
+	job = executor.submit(train, GAMMA=GAMMA, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path = run_path, num_actions = 2, use_entropy = True, folder_name = 'leaper4laneall2entgamma09', game = 'leaper')
 	jobs.append(job)

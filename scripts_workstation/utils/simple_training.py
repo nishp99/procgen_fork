@@ -40,6 +40,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
     env = FrameStack(env, frames)
 
     print('made leaper')
+    model_path = os.path.join(experiment_path, 'model.pt')
 
     policy_net = ImpalaCNN(env.observation_space, num_actions, lr)
     policy_net.to(device)
@@ -59,6 +60,8 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
 
         if episode % 10000 == 0:
             np.save(file_path, data)
+            if episode % 50000 == 0:
+                torch.save(policy_net.state_dict(), model_path)
 
         for steps in range(max_steps):
             action, log_prob, entropy = policy_net.get_action(state, device, frames)
@@ -81,8 +84,6 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, u
             state = new_state
 
     np.save(file_path, data)
-    model_path = os.path.join(experiment_path, 'model.pt')
-    torch.save(policy_net.state_dict(), model_path)
 
 """import datetime
 import os
