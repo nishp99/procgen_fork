@@ -33,31 +33,32 @@ os.mkdir(run_path)
 #T = 4
 #n = 3
 
-episodes = 250000
+episodes = 10000000
 max_steps = 300
 lr = 1e-5
 
 executor = submitit.AutoExecutor(folder="utils/results/outputs")
 
-executor.update_parameters(timeout_min = 2400, mem_gb = 3, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 256, slurm_partition = "gpu")
+executor.update_parameters(timeout_min = 10000, mem_gb = 3, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 256, slurm_partition = "gpu")
 
 jobs = []
 
 #entropy_factors = [0, 0.01, 0.1, 0.6, 1, 10, 100]
-entropy_factors = [0.1, 1, 10, 100]
+entropy_factors = [0.1]
 entropy_names = {0:'0', 0.01:'001', 0.1:'01', 0.6:'06', 1:'1', 10:'10', 100:'100'}
 
 GAMMAS = [0.9]
 GAMMA_names = {0.9:'09'}
 
-games = ['leaper', 'bigfish']
+#games = ['leaper', 'bigfish']
+games = ['leaper']
 game_folder_name = {'leaper': 'leaper4lane', 'bigfish': 'bigfish3fish'}
 
 #game_actions = ['reduced', 'all']
-game_actions = ['reduced']
+game_actions = ['all']
 action_numbers = {'leaper': {'reduced': 2, 'all': 5}, 'bigfish': {'reduced': 3, 'all': 5}}
 
-zero_rewards = True
+zero_rewards = False
 zero_observations = False
 
 mean_rewards = {True: 'MeanRew', False: ''}
