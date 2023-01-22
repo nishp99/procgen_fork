@@ -109,8 +109,8 @@ class ImpalaCNN(nn.Module):
 
     def get_action(self, obs, device, frames):
         #print(obs.shape)
-        obs_np = np.array(obs)
-        obs_tensor = (torch.from_numpy(obs_np)).to(device)
+        #obs_np = np.array(obs)
+        obs_tensor = (torch.from_numpy(obs)).to(device)
         dist = self.forward(obs_tensor, frames)
         action = dist.sample()
         log_prob = dist.log_prob(action)

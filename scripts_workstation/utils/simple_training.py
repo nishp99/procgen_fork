@@ -56,6 +56,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, e
 
     for episode in range(max_episode_num):
         state = env.reset()
+        state = np.array(state)
         state = state / 255.0
         if zero_observations:
             state = (state - np.mean(state, axis=(1,2), keepdims=True))/np.var(state, axis=(1,2), keepdims=True)
@@ -86,6 +87,7 @@ def train(GAMMA, max_episode_num, max_steps, lr, experiment_path, num_actions, e
                 break
             log_probs_entropies.append((log_prob, entropy))
             rewards.append(reward)
+            new_state = np.array(new_state)
             state = new_state/255.0
             if zero_observations:
                 state = (state - np.mean(state, axis=(1, 2), keepdims=True))/np.var(state, axis=(1,2), keepdims=True)
