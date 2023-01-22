@@ -92,7 +92,6 @@ class ImpalaCNN(nn.Module):
         #print(obs.shape)
         #assert obs.ndim == 3
         #x = obs / 255.0  # scale to 0-1
-
         x = obs.permute(3, 0, 1, 2)  # FHWC => CFHW
         x = x.reshape([3*frames,64,64])
         #print(x.shape)
@@ -110,6 +109,7 @@ class ImpalaCNN(nn.Module):
     def get_action(self, obs, device, frames):
         #print(obs.shape)
         #obs_np = np.array(obs)
+        obs = np.float32(obs)
         obs_tensor = (torch.from_numpy(obs)).to(device)
         dist = self.forward(obs_tensor, frames)
         action = dist.sample()

@@ -57,8 +57,8 @@ game_folder_name = {'leaper': 'leaper4lane', 'bigfish': 'bigfish3fish'}
 game_actions = ['reduced']
 action_numbers = {'leaper': {'reduced': 2, 'all': 5}, 'bigfish': {'reduced': 3, 'all': 5}}
 
-zero_rewards = False
-zero_observations = True
+zero_rewards = True
+zero_observations = False
 
 mean_rewards = {True: 'MeanRew', False: ''}
 mean_obs = {True: 'MeanObs', False: ''}
