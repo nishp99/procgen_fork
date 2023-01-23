@@ -14,7 +14,7 @@ class Policy(nn.Module):
         # (round up if not an integer)
 
         # conv1 : 80 x 80 -> 40 x 40
-        self.conv1 = nn.Conv2d(2, 4, kernel_size=2, stride=2)
+        self.conv1 = nn.Conv2d(1, 4, kernel_size=2, stride=2)
         # conv2 : 40 x 40 -> 20 x 20
         self.conv2 = nn.Conv2d(4, 8, kernel_size=2, stride=2)
         # conv3 : 20 x 20 -> 10 x 10
