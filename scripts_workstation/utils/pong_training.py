@@ -17,7 +17,7 @@ import torch
 
 # import pdb
 
-def train(GAMMA=0.99, max_episode_num = 1000, max_steps, lr, experiment_path, folder_name):
+def train(max_episode_num = 1000, max_steps, lr, experiment_path, folder_name, GAMMA=0.99):
     print(torch.cuda.device_count())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
