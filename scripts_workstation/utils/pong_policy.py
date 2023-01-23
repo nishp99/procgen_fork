@@ -9,7 +9,6 @@ import torch.nn.functional as F
 class Policy(nn.Module):
     def __init__(self, learning_rate=1e-4):
         super(Policy, self).__init__()
-        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
         # 80x80 to outputsize x outputsize
         # outputsize = (inputsize - kernel_size + stride)/stride
         # (round up if not an integer)
@@ -29,6 +28,7 @@ class Policy(nn.Module):
         self.fc2 = nn.Linear(64, 8)
         self.fc3 = nn.Linear(8, 1)
         self.sig = nn.Sigmoid()
+        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
 
     def forward(self, x, device): #returns action and logprob of action
         x = (torch.from_numpy(x)).to(device)
