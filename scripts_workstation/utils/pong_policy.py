@@ -33,6 +33,7 @@ class Policy(nn.Module):
     def forward(self, x, device): #returns action and logprob of action
         x = np.float32(x)
         x = (torch.from_numpy(x)).to(device)
+        x = x[None, :]
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
