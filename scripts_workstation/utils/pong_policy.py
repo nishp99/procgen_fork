@@ -31,6 +31,7 @@ class Policy(nn.Module):
         self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
 
     def forward(self, x, device): #returns action and logprob of action
+        x = np.float32(x)
         x = (torch.from_numpy(x)).to(device)
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
