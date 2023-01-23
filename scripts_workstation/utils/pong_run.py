@@ -43,5 +43,5 @@ executor.update_parameters(timeout_min = 10000, mem_gb = 3, gpus_per_node = 1, c
 jobs = []
 
 with executor.batch():
-	job = executor.submit(train, max_episode_num=episodes, max_steps=max_steps, lr=lr, experiment_path=run_path, folder_name = 'ponglre_4gamma099', GAMMA= GAMMA)
+	job = executor.submit(train, max_steps=max_steps, lr=lr, experiment_path=run_path, folder_name = 'ponglre_4gamma099', GAMMA= GAMMA,  max_episode_num=episodes)
 	jobs.append(job)
