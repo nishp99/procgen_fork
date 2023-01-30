@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-def return_gradient_entropy(rewards, probs, GAMMA=0.999, device):
+def return_gradient_entropy(rewards, probs, GAMMA, device):
     #discounted_rewards = np.zeros(len(rewards))
     #discounted_rewards = np.zeros(nums_envs, max_steps)
     rewards = (torch.from_numpy(rewards.copy())).to(device)
