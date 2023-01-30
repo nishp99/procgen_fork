@@ -17,7 +17,7 @@ import torch
 
 # import pdb
 
-def train(max_steps, lr = 1e-4, experiment_path, folder_name, n, max_episode_num, opp_rew, win_reward, GAMMA):
+def train(max_steps, lr, experiment_path, folder_name, n, max_episode_num, opp_rew, win_reward, GAMMA):
     num_envs = 8
     print(torch.cuda.device_count())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
