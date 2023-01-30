@@ -82,7 +82,7 @@ def train(max_steps, lr, experiment_path, folder_name, n, max_episode_num, opp_r
 
         for steps in range(max_steps):
             prob = policy_net.forward(batch_input, device)
-            action = np.where(np.random.rand(num_envs) < prob, UP, DOWN)
+            action = np.where(np.random.rand(num_envs) < (torch.copy(prob)).numpy(), UP, DOWN)
             prob = np.where(action == UP, prob, 1.0 - prob)
             fr_1, r_1, _, _ = envs.step(action) #return rewards and new_state vector
             fr_2, r_2, _, _ = envs.step([0]*num_envs)
