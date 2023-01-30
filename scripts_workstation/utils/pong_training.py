@@ -17,7 +17,8 @@ import torch
 
 # import pdb
 
-def train(max_steps, lr, experiment_path, folder_name, GAMMA=0.99, max_episode_num = 1000):
+def train(max_steps, lr = 1e-4, experiment_path, folder_name, n, max_episode_num, opp_rew, win_reward, GAMMA):
+    num_envs = 8
     print(torch.cuda.device_count())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -25,14 +26,27 @@ def train(max_steps, lr, experiment_path, folder_name, GAMMA=0.99, max_episode_n
     print(f'device count: {torch.cuda.device_count()}')
     #gpu = torch.cuda.get_device_name(0)
     #print(f'gpu:{gpu}')
+    action_dict = {0:2, 1:3}
+    UP = 2
+    DOWN = 3
 
     bkg_color = np.array([144, 72, 17])
     def prepro(image):
         img = np.mean(image[34:-16:2, ::2] - bkg_color, axis=-1) / 255.
         return img
 
-    env = gym.make('Pong-v4')
-    #env = FrameStack(env, frames)
+    def preprocess_batch(images):
+        list_of_images = np.asarray(images)
+        if len(list_of_images.shape) < 5:
+            list_of_images = np.expand_dims(list_of_images, 1)
+        # subtract bkg and crop
+        list_of_images_prepro = np.mean(list_of_images[:, :, 34:-16:2, ::2] - bkg_color,
+                                        axis=-1) / 255.
+        batch_input = np.swapaxes(list_of_images_prepro, 0, 1)
+        return torch.from_numpy(batch_input).float().to(device)
+
+    envs = gym.vector.make('Pong-v4', num_envs)
+
 
     print('made pong')
     #model_path = os.path.join(experiment_path, 'model.pt')
@@ -50,33 +64,50 @@ def train(max_steps, lr, experiment_path, folder_name, GAMMA=0.99, max_episode_n
     file_path = os.path.join(path, 'dic.npy')
 
     for episode in range(max_episode_num):
-        cur_s = env.reset()
-        cur_s = prepro(cur_s)
-        prev_s = None
+        fr_1 = envs.reset()
+        fr_2 = envs.step(np.random.choice([2,3],num_envs))
+        batch_input = preprocess_batch([fr_1, fr_2])
+        #create lives vector, for turning into mask
+        lives = np.array(num_envs*[n])
 
-        rewards = []
-        log_probs = []
+        rewards = np.zeros(num_envs, max_steps)
+        episodes = np.ones(num_envs)*max_steps
+        probs = np.zeros(num_envs, max_steps)
 
         if episode % 10000 == 0:
             np.save(file_path, data)
             if episode % 50000 == 0:
                 torch.save(policy_net.state_dict(), model_path)
 
+
         for steps in range(max_steps):
-            x = cur_s - prev_s if prev_s is not None else np.zeros_like(cur_s)
-            prev_s = cur_s
-            action, log_prob = policy_net.forward(x, device)
-            new_state, reward, done, _ = env.step(action)
-            rewards.append(reward)
-            log_probs.append(log_prob)
-            if done:
-                data['rew'][episode] = sum(rewards)
-                data['eps'][episode] = steps
-                policy_net.optimizer.zero_grad()
-                return_gradient_entropy(rewards, log_probs, GAMMA, device)
-                policy_net.optimizer.step()
-                break
-            cur_s = prepro(new_state)
+            prob = policy_net.forward(batch_input, device)
+            action = np.where(np.random.rand(num_envs) < prob, UP, DOWN)
+            prob = np.where(action == UP, prob, 1.0 - prob)
+            fr_1, r_1, _, _ = envs.step(action) #return rewards and new_state vector
+            fr_2, r_2, _, _ = envs.step([0]*num_envs)
+            reward = r_1 + r_2
+            lost = np.where(reward < 0, 1, 0)
+            episode_lost = np.where(lost == 1, steps, max_steps)
+            episodes = np.minimum(episodes, episode_lost)
+            lives -= lost
+            reward = np.where(reward > 0, opp_rew, 0)
+
+            if steps == max_steps-1:
+                reward += win_reward
+            rewards[:, steps] = reward
+            probs[:, steps] = prob
+            batch_input = preprocess_batch([fr_1,fr_2])
+
+        reward_mask = np.where(lives > 0, 1, 0)
+        rewards = rewards * reward_mask[:, None]
+
+        data['rew'][episode] = np.mean(reward_mask)
+        data['eps'][episode] = np.mean(episodes)
+        policy_net.optimizer.zero_grad()
+        return_gradient_entropy(rewards, probs, GAMMA, device)
+        policy_net.optimizer.step()
+
 
     np.save(file_path, data)
     torch.save(policy_net.state_dict(), model_path)
