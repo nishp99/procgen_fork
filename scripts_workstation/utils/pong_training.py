@@ -65,7 +65,7 @@ def train(max_steps, lr, experiment_path, folder_name, n, max_episode_num, opp_r
 
     for episode in range(max_episode_num):
         fr_1 = envs.reset()
-        fr_2 = envs.step(np.random.choice([2,3],num_envs))
+        fr_2, _, _, _ = envs.step(np.random.choice([2,3],num_envs))
         batch_input = preprocess_batch([fr_1, fr_2])
         #create lives vector, for turning into mask
         lives = np.array(num_envs*[n])
