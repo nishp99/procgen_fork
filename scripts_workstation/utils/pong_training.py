@@ -70,9 +70,9 @@ def train(max_steps, lr, experiment_path, folder_name, n, max_episode_num, opp_r
         #create lives vector, for turning into mask
         lives = np.array(num_envs*[n])
 
-        rewards = np.zeros(num_envs, max_steps)
+        rewards = np.zeros((num_envs, max_steps))
         episodes = np.ones(num_envs)*max_steps
-        probs = np.zeros(num_envs, max_steps)
+        probs = np.zeros((num_envs, max_steps))
 
         if episode % 10000 == 0:
             np.save(file_path, data)
