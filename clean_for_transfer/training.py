@@ -15,7 +15,7 @@ policy=pong_utils.Policy().to(device)
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
-def train(episode, experiment_path, folder_name)
+def train(episode, experiment_path, folder_name):
     device = pong_utils.device
 
     policy = pong_utils.Policy().to(device)

@@ -20,16 +20,16 @@ run_timestamp = datetime.datetime.now().strftime('%Y%m-%d%H-%M%S')
 #os.mkdir(with name of unique identifier)
 
 #os.path.join(results, unique identifier)
-results_path = os.path.join("utils", "results")
+results_path = os.path.join("results", "pong")
 os.makedirs(results_path, exist_ok = True)
 
-experiment_path = os.path.join(results_path, "new_pong_results")
+experiment_path = os.path.join(results_path, "outputs")
 os.makedirs(experiment_path, exist_ok = True)
 
-run_path = os.path.join(experiment_path, run_timestamp)
+run_path = os.path.join(results_path, run_timestamp)
 os.mkdir(run_path)
 
-executor = submitit.AutoExecutor(folder="utils/results/pong_results")
+executor = submitit.AutoExecutor(folder="results/pong/outputs")
 
 executor.update_parameters(timeout_min = 1000, mem_gb = 2, gpus_per_node = 1, cpus_per_task = 1, slurm_array_parallelism = 5, slurm_partition = "gpu")
 
