@@ -4,6 +4,7 @@ from parallelEnv import parallelEnv
 import numpy as np
 import torch.optim as optim
 import gym
+import os
 import time
 
 # check which device is being used.
@@ -35,7 +36,7 @@ def train(episode, experiment_path, folder_name):
 
     discount_rate = .99
     beta = .01
-    tmax = 100
+    tmax = 20
 
     # keep track of progress
     mean_rewards = np.zeros(episode)
@@ -66,6 +67,7 @@ def train(episode, experiment_path, folder_name):
 
         # display some progress every 20 iterations
         if (e + 1) % 20 == 0:
+            print(e)
             #print("Episode: {0:d}, score: {1:f}".format(e + 1, np.mean(total_rewards)))
             #print(total_rewards)
             np.save(file_path, mean_rewards)

@@ -8,7 +8,7 @@ import datetime
 from training import train
 #rom procgen import ProcgenEnv
 #import update
-import entropy_update
+#import entropy_update
 #from update import *
 #from entropy_update import *
 import sys
@@ -36,5 +36,5 @@ executor.update_parameters(timeout_min = 1000, mem_gb = 2, gpus_per_node = 1, cp
 jobs = []
 
 with executor.batch():
-	job = executor.submit(train, experiment_path=run_path, folder_name = 'pong_clean')
+	job = executor.submit(train, episode=2000, experiment_path=run_path, folder_name = 'pong_clean')
 	jobs.append(job)
