@@ -88,7 +88,7 @@ def play(env, policy, time=2000, preprocess=None, nrand=5):
 
 
 # collect trajectories for a parallelized parallelEnv object
-def collect_trajectories(envs, policy, tmax=200, nrand=5):
+def collect_trajectories(envs, policy, R, tmax=200, nrand=5):
     # number of parallel instances
     n = len(envs.ps)
 
@@ -97,6 +97,12 @@ def collect_trajectories(envs, policy, tmax=200, nrand=5):
     reward_list = []
     prob_list = []
     action_list = []
+    rewards_mask = np.ones(n)
+
+    #make into numpy, faster
+    """
+    state_list = np.zeros()
+    """
 
     envs.reset()
 
@@ -130,21 +136,40 @@ def collect_trajectories(envs, policy, tmax=200, nrand=5):
         fr2, re2, is_done, _ = envs.step([0] * n)
 
         reward = re1 + re2
+        mask = np.where(reward < 0, 0, 1)
+        rewards_mask *= mask
+
 
         # store the result
         state_list.append(batch_input)
-        reward_list.append(reward)
+        #reward_list.append(reward)
         prob_list.append(probs)
         action_list.append(action)
 
         # stop if any of the trajectories is done
         # we want all the lists to be retangular
         if is_done.any():
+            print('Done!')
             break
 
     # return pi_theta, states, actions, rewards, probability
+
+
+    """
+    we now convert the reward list to numpy array, then perform masking procedure, where any episodes with negative
+    reward have all their rewards set to 0
+    we give all other episodes (survived ones) rewards of zero throughout episode, except for very last timestep,
+    where rewards of +R is given 
+    process can be simplified by just creating this array from the reward mask, we will do that for now
+    """
+    #reward_list = np.asarray(reward_list)
+    rewards = np.zeros((len(action_list),n))
+    rewards[-1,:] = rewards_mask * R
+
+
+
     return prob_list, state_list, \
-           action_list, reward_list
+           action_list, rewards
 
 
 # convert states to probability, passing through the policy
@@ -158,8 +183,15 @@ def states_to_prob(policy, states):
 # same thing as -policy_loss
 def surrogate(policy, old_probs, states, actions, rewards,
               discount=0.995, beta=0.01):
-    discount = discount ** np.arange(len(rewards))
-    rewards = np.asarray(rewards) * discount[:, np.newaxis]
+    #discount = discount ** np.arange(len(rewards))
+    discount = discount ** np.arange(len(actions))
+
+    #rewards = np.asarray(rewards) * discount[:, np.newaxis]
+    rewards = rewards * discount[:, np.newaxis]
+    """
+    If there are any -1 in the reward list for an episode, we set all rewards in said episode to be 0
+    Otherwise, we set all rewards in episode to be 0, except for the very last reward, which we set to be 1 or 2?
+    """
 
     # convert rewards to future rewards
     rewards_future = rewards[::-1].cumsum(axis=0)[::-1]
@@ -170,17 +202,17 @@ def surrogate(policy, old_probs, states, actions, rewards,
     rewards_normalized = (rewards_future - mean[:, np.newaxis]) / std[:, np.newaxis]
 
     # convert everything into pytorch tensors and move to gpu if available
-    actions = np.array(actions)
+    actions = np.asarray(actions)
     actions = torch.from_numpy(actions)
     actions = actions.to(torch.int8)
     actions = actions.to(device)
 
-    old_probs = np.array(old_probs)
+    old_probs = np.asarray(old_probs)
     old_probs = torch.from_numpy(old_probs)
     old_probs = old_probs.to(torch.float)
     old_probs = old_probs.to(device)
     
-    rewards = np.array(rewards_normalized)
+    rewards = np.asarray(rewards_normalized)
     rewards = torch.from_numpy(rewards)
     rewards = rewards.to(torch.float)
     rewards = rewards.to(device)

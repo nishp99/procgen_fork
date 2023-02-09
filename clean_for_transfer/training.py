@@ -16,7 +16,7 @@ policy=pong_utils.Policy().to(device)
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
-def train(episode, experiment_path, folder_name):
+def train(episode, reward, tmax, experiment_path, folder_name):
     device = pong_utils.device
 
     policy = pong_utils.Policy().to(device)
@@ -36,7 +36,6 @@ def train(episode, experiment_path, folder_name):
 
     discount_rate = .99
     beta = .01
-    tmax = 20
 
     # keep track of progress
     mean_rewards = np.zeros(episode)
@@ -44,7 +43,7 @@ def train(episode, experiment_path, folder_name):
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards = \
-            pong_utils.collect_trajectories(envs, policy, tmax=tmax)
+            pong_utils.collect_trajectories(envs, policy, reward, tmax=tmax)
 
         total_rewards = np.sum(rewards, axis=0)
 
@@ -63,6 +62,7 @@ def train(episode, experiment_path, folder_name):
         beta *= .995
 
         # get the average reward of the parallel environments
+
         mean_rewards[e] = (np.mean(total_rewards))
 
         # display some progress every 20 iterations
