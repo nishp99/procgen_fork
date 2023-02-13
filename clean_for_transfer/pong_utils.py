@@ -98,6 +98,7 @@ def collect_trajectories(envs, policy, R, tmax=200, nrand=5):
     prob_list = []
     action_list = []
     rewards_mask = np.ones(n)
+    time_od = np.zeros(n)
 
     #make into numpy, faster
     """
@@ -138,6 +139,7 @@ def collect_trajectories(envs, policy, R, tmax=200, nrand=5):
         reward = re1 + re2
         mask = np.where(reward < 0, 0, 1)
         rewards_mask *= mask
+        time_od += rewards_mask
 
 
         # store the result
@@ -169,7 +171,7 @@ def collect_trajectories(envs, policy, R, tmax=200, nrand=5):
 
 
     return prob_list, state_list, \
-           action_list, rewards
+           action_list, rewards, rewards_mask, time_od, fr1, fr2
 
 
 # convert states to probability, passing through the policy
