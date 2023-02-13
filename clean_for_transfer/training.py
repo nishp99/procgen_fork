@@ -16,7 +16,7 @@ policy=pong_utils.Policy().to(device)
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
-def train(episode, reward, tmax, experiment_path, folder_name):
+def train(episode, reward, n, tmax, experiment_path, folder_name):
     device = pong_utils.device
 
     policy = pong_utils.Policy().to(device)
@@ -27,7 +27,7 @@ def train(episode, reward, tmax, experiment_path, folder_name):
     optimizer = optim.Adam(policy.parameters(), lr=1e-4)
 
     # initialize environment
-    envs = parallelEnv('PongDeterministic-v4', n=8, seed=1234)
+    envs = parallelEnv('PongDeterministic-v4', n=n, seed=1234)
 
     path = os.path.join(experiment_path, folder_name)
     os.makedirs(path, exist_ok=True)
