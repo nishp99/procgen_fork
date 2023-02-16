@@ -43,6 +43,9 @@ def train(episode, R, n, tmax, experiment_path, folder_name, generalising = Fals
     dic['r'] = np.zeros(episode)
     dic['t'] = np.zeros(episode)
 
+    #dic['r'] = np.zeros((episode, n))
+    #dic['t'] = np.zeros((episode, n))
+
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards, rewards_mask, time_od, fr1, fr2 = \
@@ -81,6 +84,7 @@ def train(episode, R, n, tmax, experiment_path, folder_name, generalising = Fals
                 time_od += rewards_mask
 
             dic['t'][e] = np.mean(time_od)
+            #dic['t'][e,:] = time_od
 
 
         # the regulation term also reduces
@@ -90,6 +94,7 @@ def train(episode, R, n, tmax, experiment_path, folder_name, generalising = Fals
         # get the average reward of the parallel environments
 
         dic['r'][e] = (np.mean(total_rewards))
+        #dic['r'][e, :] = total_rewards
 
         # display some progress every 20 iterations
         if (e + 1) % 100 == 0:
