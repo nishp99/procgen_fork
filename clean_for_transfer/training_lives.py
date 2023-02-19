@@ -1,5 +1,5 @@
 # custom utilies for displaying animation, collecting rollouts and more
-import pong_utils
+import pong_utils_lives
 from parallelEnv import parallelEnv
 import numpy as np
 import torch.optim as optim
@@ -16,7 +16,7 @@ policy=pong_utils.Policy().to(device)
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
-def train(episode, R, n, tmax, experiment_path, folder_name, generalising = False):
+def train(episode, R, n, k, tmax, experiment_path, folder_name, generalising = False):
     device = pong_utils.device
 
     policy = pong_utils.Policy().to(device)
@@ -40,16 +40,13 @@ def train(episode, R, n, tmax, experiment_path, folder_name, generalising = Fals
 
     dic = dict()
     # keep track of progress
-    #dic['r'] = np.zeros(episode)
-    #dic['t'] = np.zeros(episode)
-
     dic['r'] = np.zeros((episode, n))
     dic['t'] = np.zeros((episode, n))
 
     for e in range(episode):
         # collect trajectories
-        old_probs, states, actions, rewards, rewards_mask, time_od, fr1, fr2 = \
-            pong_utils.collect_trajectories(envs, policy, R, tmax=tmax)
+        old_probs, states, actions, rewards, max_time = \
+            pong_utils.collect_trajectories(envs, policy, R, k, tmax=tmax)
 
         total_rewards = np.sum(rewards, axis=0)
 
@@ -63,38 +60,14 @@ def train(episode, R, n, tmax, experiment_path, folder_name, generalising = Fals
         optimizer.step()
         del L
 
-        if generalising:
-            while True:
-                if not np.any(rewards_mask):
-                    break
-                batch_input = pong_utils.preprocess_batch([fr1, fr2])
-                # probs will only be used as the pi_old
-                # no gradient propagation is needed
-                # so we move it to the cpu
-                probs = policy(batch_input).squeeze().cpu().detach().numpy()
-                action = np.where(np.random.rand(n) < probs, 4, 5)
-                # advance the game (0=no action)
-                # we take one action and skip game forward
-                fr1, re1, is_done, _ = envs.step(action)
-                fr2, re2, is_done, _ = envs.step([0] * n)
-
-                reward = re1 + re2
-                mask = np.where(reward < 0, 0, 1)
-                rewards_mask *= mask
-                time_od += rewards_mask
-
-            #dic['t'][e] = np.mean(time_od)
-            dic['t'][e,:] = time_od
-
-
         # the regulation term also reduces
         # this reduces exploration in later runs
         beta *= .995
 
         # get the average reward of the parallel environments
 
-        #dic['r'][e] = (np.mean(total_rewards))
         dic['r'][e, :] = total_rewards
+        dic['t'][e, :] = max_time
 
         # display some progress every 20 iterations
         if (e + 1) % 100 == 0:
