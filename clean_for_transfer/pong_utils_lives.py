@@ -90,8 +90,7 @@ def play(env, policy, time=2000, preprocess=None, nrand=5):
 # collect trajectories for a parallelized parallelEnv object
 def collect_trajectories(envs, policy, R, k, tmax=200, nrand=5):
 	# number of parallel instances
-    n = len(envs.ps)
-
+	n = len(envs.ps)
 	# initialize returning lists and start the game!
 	state_list = []
 	prob_list = []
@@ -162,8 +161,7 @@ def collect_trajectories(envs, policy, R, k, tmax=200, nrand=5):
 	rewards[-1, :] = rewards_mask * R
 
 	#
-	return prob_list, state_list, \
-		   action_list, rewards, max_time
+	return prob_list, state_list, action_list, rewards, max_time
 
 
 # convert states to probability, passing through the policy
