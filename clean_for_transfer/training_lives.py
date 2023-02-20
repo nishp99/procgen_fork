@@ -9,17 +9,17 @@ import time
 
 # check which device is being used.
 # I recommend disabling gpu until you've made sure that the code runs
-device = pong_utils.device
+device = pong_utils_lives.device
 
-policy=pong_utils.Policy().to(device)
+policy=pong_utils_lives.Policy().to(device)
 
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
 def train(episode, R, n, k, tmax, experiment_path, folder_name, generalising = False):
-    device = pong_utils.device
+    device = pong_utils_lives.device
 
-    policy = pong_utils.Policy().to(device)
+    policy = pong_utils_lives.Policy().to(device)
 
     # we use the adam optimizer with learning rate 2e-4
     # optim.SGD is also possible
@@ -46,7 +46,7 @@ def train(episode, R, n, k, tmax, experiment_path, folder_name, generalising = F
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards, max_time = \
-            pong_utils.collect_trajectories(envs, policy, R, k, tmax=tmax)
+            pong_utils_lives.collect_trajectories(envs, policy, R, k, tmax=tmax)
 
         total_rewards = np.sum(rewards, axis=0)
 
@@ -54,7 +54,7 @@ def train(episode, R, n, k, tmax, experiment_path, folder_name, generalising = F
         # use your own surrogate function
         # L = -surrogate(policy, old_probs, states, actions, rewards, beta=beta)
 
-        L = -pong_utils.surrogate(policy, old_probs, states, actions, rewards, beta=beta)
+        L = -pong_utils_lives.surrogate(policy, old_probs, states, actions, rewards, beta=beta)
         optimizer.zero_grad()
         L.backward()
         optimizer.step()
