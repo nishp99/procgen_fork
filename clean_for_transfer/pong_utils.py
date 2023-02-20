@@ -88,13 +88,14 @@ def play(env, policy, time=2000, preprocess=None, nrand=5):
 
 
 # collect trajectories for a parallelized parallelEnv object
-def collect_trajectories(envs, policy, R, tmax=200, nrand=5):
+def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
     # number of parallel instances
     n = len(envs.ps)
 
     # initialize returning lists and start the game!
     state_list = []
     reward_list = []
+    rewards = np.zeros((tmax,n))
     prob_list = []
     action_list = []
     rewards_mask = np.ones(n)
@@ -133,9 +134,13 @@ def collect_trajectories(envs, policy, R, tmax=200, nrand=5):
         fr2, re2, is_done, _ = envs.step([0] * n)
 
         reward = re1 + re2
+
+
         mask = np.where(reward < 0, 0, 1)
+
+        edited_reward = rewards_mask * (mask - 1) * ratio
         rewards_mask *= mask
-        #
+        rewards[t,:] = np.copy(edited_reward)
         time_od += rewards_mask
 
 
@@ -162,7 +167,7 @@ def collect_trajectories(envs, policy, R, tmax=200, nrand=5):
     process can be simplified by just creating this array from the reward mask, we will do that for now
     """
     #reward_list = np.asarray(reward_list)
-    rewards = np.zeros((len(action_list),n))
+    #rewards = np.zeros((len(action_list),n))
     rewards[-1,:] = rewards_mask * R
 
 

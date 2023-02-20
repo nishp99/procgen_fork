@@ -16,7 +16,7 @@ policy=pong_utils.Policy().to(device)
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
-def train(episode, R, n, tmax, experiment_path, folder_name, generalising = False):
+def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = False):
     device = pong_utils.device
 
     policy = pong_utils.Policy().to(device)
@@ -49,7 +49,7 @@ def train(episode, R, n, tmax, experiment_path, folder_name, generalising = Fals
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards, rewards_mask, time_od, fr1, fr2 = \
-            pong_utils.collect_trajectories(envs, policy, R, tmax=tmax)
+            pong_utils.collect_trajectories(envs, policy, R, r, tmax=tmax)
 
         total_rewards = np.sum(rewards, axis=0)
 
