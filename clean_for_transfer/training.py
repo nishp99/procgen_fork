@@ -52,7 +52,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
             pong_utils.collect_trajectories(envs, policy, R, r, tmax=tmax)
 
         if curriculum:
-            if np.mean(rewards_mask) >= 0.8:
+            if np.mean(rewards_mask) >= 1.6:
                 tmax += 14
 
         total_rewards = np.sum(rewards, axis=0)
