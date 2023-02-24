@@ -89,7 +89,8 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
 
             #dic['t'][e] = np.mean(time_od)
             dic['t'][e,:] = time_od
-
+        else:
+            dic['t'][e,:] = time_od
 
         # the regulation term also reduces
         # this reduces exploration in later runs
