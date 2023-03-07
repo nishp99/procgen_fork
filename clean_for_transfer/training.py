@@ -6,6 +6,7 @@ import torch.optim as optim
 import gym
 import os
 import time
+import torch
 
 # check which device is being used.
 # I recommend disabling gpu until you've made sure that the code runs
@@ -16,7 +17,7 @@ policy=pong_utils.Policy().to(device)
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
-def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = False, curriculum = False):
+def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = False, curriculum = False, save_model = False):
     device = pong_utils.device
 
     policy = pong_utils.Policy().to(device)
@@ -33,6 +34,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
     os.makedirs(path, exist_ok=True)
     #model_path = os.path.join(path, 'model.pt')
     file_path = os.path.join(path, 'dic.npy')
+    model_path = os.path.join(path, 'model.pt')
 
     discount_rate = .99
     beta = .01
@@ -108,7 +110,9 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
             #print(total_rewards)
             np.save(file_path, dic)
 
+
     # update progress widget bar
     #timer.update(e + 1)
-
+    if save_model:
+        torch.save(policy.state_dict(), model_path)
 #timer.finish()
