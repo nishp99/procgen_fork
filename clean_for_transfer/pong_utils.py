@@ -138,7 +138,7 @@ def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
 
         mask = np.where(reward < 0, 0, 1)
 
-        edited_reward = rewards_mask * (mask - 1) * ratio
+        edited_reward = rewards_mask * (mask - 1) * ratio * R
         rewards_mask *= mask
         rewards[t,:] = np.copy(edited_reward)
         time_od += rewards_mask
