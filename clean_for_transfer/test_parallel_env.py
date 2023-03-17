@@ -3,4 +3,4 @@ import gym
 import random as rand
 from parallelEnv_changed import parallelEnv
 
-envs = parallelEnv('LunarLander-v2', n=4)
+envs = parallelEnv('PongDeterministic-v4', n=4)
