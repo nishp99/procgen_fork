@@ -51,7 +51,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards, rewards_mask, time_od, fr1, fr2 = \
-            pong_utils.collect_trajectories(envs, policy, R, r, tmax=tmax)
+            pong_utils.collect_trajectories(envs, policy, R, r, tmax=tmax, generalising=generalising)
 
         if curriculum:
             if np.mean(rewards_mask) >= 0.8:
@@ -115,4 +115,6 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
     #timer.update(e + 1)
     if save_model:
         torch.save(policy.state_dict(), model_path)
+
+    return 0
 #timer.finish()

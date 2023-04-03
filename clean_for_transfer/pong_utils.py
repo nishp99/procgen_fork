@@ -1,3 +1,5 @@
+from numpy import ndarray
+
 from parallelEnv import parallelEnv
 #import matplotlib.pyplot as plt
 import torch
@@ -88,23 +90,25 @@ def play(env, policy, time=2000, preprocess=None, nrand=5):
 
 
 # collect trajectories for a parallelized parallelEnv object
-def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
+def collect_trajectories(envs, policy, R, ratio = 0, tmax=200, nrand=5, generalising = False):
     # number of parallel instances
     n = len(envs.ps)
 
     # initialize returning lists and start the game!
     state_list = []
-    reward_list = []
-    rewards = np.zeros((tmax,n))
+    #reward_list = []
+    #rewards = np.zeros((tmax,n))
+    rewards = np.zeros((1,n))
     prob_list = []
     action_list = []
     rewards_mask = np.ones(n)
     time_od = np.zeros(n)
-
-
-    envs.reset()
+    counters = np.ones(n) * tmax
+    wins = np.zeros(n)
+    alive = np.ones(n)
 
     # start all parallel agents
+    envs.reset()
     envs.step([1] * n)
 
     # perform nrand random steps
@@ -112,8 +116,10 @@ def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
         fr1, re1, _, _ = envs.step(np.random.choice([RIGHT, LEFT], n))
         fr2, re2, _, _ = envs.step([0] * n)
 
-    for t in range(tmax):
 
+    #for t in range(tmax):
+    t_step = tmax
+    while t_step > 0:
         # prepare the input
         # preprocess_batch properly converts two frames into
         # shape (n, 2, 80, 80), the proper input for the policy
@@ -136,26 +142,51 @@ def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
         reward = re1 + re2
 
 
-        mask = np.where(reward < 0, 0, 1)
+        mask: ndarray = np.where(reward < 0, 0, 1)
+        won = np.where(reward > 0, 1, 0)
 
         edited_reward = rewards_mask * (mask - 1) * ratio * R
         rewards_mask *= mask
-        rewards[t,:] = np.copy(edited_reward)
+        if generalising:
+            alive *= np.logical_or(mask, np.where(counters < 1, 1, 0))
+        rewards = np.concatenate((rewards, np.expand_dims(edited_reward, 0)), axis = 0)
         time_od += rewards_mask
-
+        wins += (won * rewards_mask)
 
         # store the result
         state_list.append(batch_input)
-        #reward_list.append(reward)
         prob_list.append(probs)
         action_list.append(action)
 
         # stop if any of the trajectories is done
-        # we want all the lists to be retangular
+        # we want all the lists to be rectangular
         if is_done.any():
             print('Done!')
             break
+        """
+        at end of tmax check if any agents have won
+        if yes, we add on extra time steps
+        """
 
+        #win_mask = np.where(counters == 1, 1, 0)
+
+        if np.any(counters == 1):
+            deltas = (wins * 17)
+            deltas_true = np.mod(deltas, 14)
+
+            counters += deltas_true
+            wins = np.zeros(n)
+            t_step = np.max(counters)
+
+            done_mask = np.where(counters == 1, 1, 0)
+            # reward of 1 to all surviving agents who have just completed last timestep
+            # (by altering the (current) final column of the reward matrix)
+            rewards[-1,:] = np.copy(done_mask) * np.copy(rewards_mask) * R
+
+            rewards_mask *= np.where(counters == 1, 0, 1)
+
+        t_step -= 1
+        counters -= 1
     # return pi_theta, states, actions, rewards, probability
 
 
@@ -168,12 +199,12 @@ def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
     """
     #reward_list = np.asarray(reward_list)
     #rewards = np.zeros((len(action_list),n))
-    rewards[-1,:] = rewards_mask * R
+    #rewards[-1,:] = rewards_mask * R
 
 
     #
     return prob_list, state_list, \
-           action_list, rewards, rewards_mask, time_od, fr1, fr2
+           action_list, rewards, alive, time_od, fr1, fr2
 
 
 # convert states to probability, passing through the policy
