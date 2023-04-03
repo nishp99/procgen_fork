@@ -204,7 +204,7 @@ def collect_trajectories(envs, policy, R, ratio = 0, tmax=200, nrand=5, generali
 
     #
     return prob_list, state_list, \
-           action_list, rewards, alive, time_od, fr1, fr2
+           action_list, rewards[1:,:], alive, time_od, fr1, fr2
 
 
 # convert states to probability, passing through the policy
