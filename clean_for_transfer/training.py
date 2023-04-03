@@ -81,13 +81,17 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
                 action = np.where(np.random.rand(n) < probs, 4, 5)
                 # advance the game (0=no action)
                 # we take one action and skip game forward
-                fr1, re1, is_done, _ = envs.step(action)
-                fr2, re2, is_done, _ = envs.step([0] * n)
+                fr1, re1, is_done1, _ = envs.step(action)
+                fr2, re2, is_done2, _ = envs.step([0] * n)
 
                 reward = re1 + re2
+                is_done = np.logical_or(is_done1, is_done2)
                 mask = np.where(reward < 0, 0, 1)
                 rewards_mask *= mask
                 time_od += rewards_mask
+                if np.any(is_done):
+                    print('We have a winner! (or loser)')
+                    break
 
             #dic['t'][e] = np.mean(time_od)
             dic['t'][e,:] = time_od

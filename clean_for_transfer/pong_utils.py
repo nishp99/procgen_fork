@@ -142,13 +142,15 @@ def collect_trajectories(envs, policy, R, ratio = 0, tmax=200, nrand=5, generali
         reward = re1 + re2
 
 
-        mask: ndarray = np.where(reward < 0, 0, 1)
+        mask = np.where(reward < 0, 0, 1)
         won = np.where(reward > 0, 1, 0)
 
         edited_reward = rewards_mask * (mask - 1) * ratio * R
         rewards_mask *= mask
         if generalising:
-            alive *= np.logical_or(mask, np.where(counters < 1, 1, 0))
+            done = np.where(counters < 1, 1, 0)
+            alive *= (mask + done - (mask*done))
+            #alive *= np.logical_or(mask, np.where(counters < 1, 1, 0))
         rewards = np.concatenate((rewards, np.expand_dims(edited_reward, 0)), axis = 0)
         time_od += rewards_mask
         wins += (won * rewards_mask)
