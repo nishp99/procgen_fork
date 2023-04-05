@@ -141,7 +141,6 @@ def collect_trajectories(envs, policy, R, ratio = 0, tmax=200, nrand=5, generali
 
         reward = re1 + re2
 
-
         mask = np.where(reward < 0, 0, 1)
         won = np.where(reward > 0, 1, 0)
 

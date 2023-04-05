@@ -71,6 +71,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
 
         if generalising:
             while True:
+                print(rewards_mask)
                 if not np.any(rewards_mask):
                     break
                 batch_input = pong_utils.preprocess_batch([fr1, fr2])
