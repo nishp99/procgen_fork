@@ -174,13 +174,13 @@ def collect_trajectories(envs, policy, R, ratio, randrew = False, tmax=200, nran
     # reward_list = np.asarray(reward_list)
     # rewards = np.zeros((len(action_list),n))
 
-    #rewards[-1,:] = rewards_mask * R
+    #set a semirandom time to receive reward for the surviving agents
     if randrew:
-        reward_time = tmax - np.random.randint(0, 12)
+        time_indices = tmax - 1 - np.random.randint(0, 12, n)
+        env_indices = np.arange(n)
+        rewards[time_indices, env_indices] = rewards_mask * R
     else:
-        reward_time = -1
-
-    rewards[reward_time, :] = rewards_mask * R
+        rewards[-1, :] = rewards_mask * R
 
     #
     return prob_list, state_list, \
