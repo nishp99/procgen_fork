@@ -10,17 +10,17 @@ import torch
 
 # check which device is being used.
 # I recommend disabling gpu until you've made sure that the code runs
-device = pong_utils.device
+device = pong_utils_cleaner.device
 
-policy=pong_utils.Policy().to(device)
+policy=pong_utils_cleaner.Policy().to(device)
 
 # we use the adam optimizer with learning rate 2e-4
 # optim.SGD is also possible
 
 def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = False, curriculum = False, save_model = False):
-    device = pong_utils.device
+    device = pong_utils_cleaner.device
 
-    policy = pong_utils.Policy().to(device)
+    policy = pong_utils_cleaner.Policy().to(device)
 
     # we use the adam optimizer with learning rate 2e-4
     # optim.SGD is also possible
@@ -51,7 +51,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards, rewards_mask, time_od, fr1, fr2 = \
-            pong_utils.collect_trajectories(envs, policy, R, r, tmax=tmax)
+            pong_utils_cleaner.collect_trajectories(envs, policy, R, r, tmax=tmax)
 
         if curriculum:
             if np.mean(rewards_mask) >= 0.8:
@@ -63,7 +63,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
         # use your own surrogate function
         # L = -surrogate(policy, old_probs, states, actions, rewards, beta=beta)
 
-        L = -pong_utils.surrogate(policy, old_probs, states, actions, rewards, beta=beta)
+        L = -pong_utils_cleaner.surrogate(policy, old_probs, states, actions, rewards, beta=beta)
         optimizer.zero_grad()
         L.backward()
         optimizer.step()
@@ -74,7 +74,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
             while True:
                 if not np.any(rewards_mask):
                     break
-                batch_input = pong_utils.preprocess_batch([fr1, fr2])
+                batch_input = pong_utils_cleaner.preprocess_batch([fr1, fr2])
                 # probs will only be used as the pi_old
                 # no gradient propagation is needed
                 # so we move it to the cpu
@@ -115,7 +115,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
             #print("Episode: {0:d}, score: {1:f}".format(e + 1, np.mean(total_rewards)))
             #print(total_rewards)
             np.save(file_path, dic)
-            
+
             if (e + 1) % 1000 == 0:
                 torch.save(policy.state_dict(), model_path)
 
