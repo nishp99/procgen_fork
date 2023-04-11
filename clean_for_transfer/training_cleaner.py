@@ -1,5 +1,5 @@
 # custom utilies for displaying animation, collecting rollouts and more
-import pong_utils
+import pong_utils_cleaner
 from parallelEnv import parallelEnv
 import numpy as np
 import torch.optim as optim
