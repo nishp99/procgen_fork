@@ -115,6 +115,9 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
             #print("Episode: {0:d}, score: {1:f}".format(e + 1, np.mean(total_rewards)))
             #print(total_rewards)
             np.save(file_path, dic)
+            
+            if (e + 1) % 1000 == 0:
+                torch.save(policy.state_dict(), model_path)
 
 
     # update progress widget bar

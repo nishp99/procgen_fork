@@ -116,8 +116,8 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
             #print(total_rewards)
             np.save(file_path, dic)
 
-        if (e+1) % 1000 == 0:
-            torch.save(policy.state_dict(), model_path)
+            if (e+1) % 1000 == 0:
+                torch.save(policy.state_dict(), model_path)
 
 
     # update progress widget bar
