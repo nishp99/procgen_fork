@@ -88,7 +88,7 @@ def play(env, policy, time=2000, preprocess=None, nrand=5):
 
 
 # collect trajectories for a parallelized parallelEnv object
-def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
+def collect_trajectories(envs, policy, R, ratio, randrew = False, tmax=200, nrand=5, preagent=None):
     # number of parallel instances
     n = len(envs.ps)
 
@@ -109,6 +109,17 @@ def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
     for _ in range(nrand):
         fr1, re1, _, _ = envs.step(np.random.choice([RIGHT, LEFT], n))
         fr2, re2, _, _ = envs.step([0] * n)
+
+    if preagent is not None:
+        #take random number of steps using a pretrained agent
+        pre_steps = rand.randint(0,50)
+        for _ in range(pre_steps):
+            frame_input = preprocess_batch([fr1, fr2])
+            probabilities = preagent(frame_input).squeeze().cpu().detach().numpy()
+            actions = np.where(np.random.rand(n) < probabilities, RIGHT, LEFT)
+
+            fr1, re1, is_done, _ = envs.step(actions)
+            fr2, re2, is_done, _ = envs.step([0] * n)
 
     # for t in range(tmax):
     for t in range(tmax):
@@ -164,7 +175,10 @@ def collect_trajectories(envs, policy, R, ratio, tmax=200, nrand=5):
     # rewards = np.zeros((len(action_list),n))
 
     #rewards[-1,:] = rewards_mask * R
-    reward_time = tmax - np.random.randint(0, 12)
+    if randrew:
+        reward_time = tmax - np.random.randint(0, 12)
+    else:
+        reward_time = -1
 
     rewards[reward_time, :] = rewards_mask * R
 

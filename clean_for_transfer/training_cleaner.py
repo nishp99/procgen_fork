@@ -8,19 +8,29 @@ import os
 import time
 import torch
 
-# check which device is being used.
+"""# check which device is being used.
 # I recommend disabling gpu until you've made sure that the code runs
 device = pong_utils_cleaner.device
 
-policy=pong_utils_cleaner.Policy().to(device)
-
+policy = pong_utils_cleaner.Policy().to(device)
 # we use the adam optimizer with learning rate 2e-4
-# optim.SGD is also possible
+# optim.SGD is also possible"""
 
-def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = False, curriculum = False, save_model = False):
+def train(episode, R, r, n, tmax, experiment_path, folder_name, randrew = True, preagent = False, generalising=False, curriculum=False, save_model=False):
     device = pong_utils_cleaner.device
 
     policy = pong_utils_cleaner.Policy().to(device)
+
+    #load pretrained agent
+    pretrained_agent = None
+    if preagent:
+        init_folder = 't75eps10000n16'
+        path = os.path.join(init_folder, 'model.pt')
+        init_path = os.path.join('pong_upgraded', '202304-0313-0328')
+        final_path = os.path.join('results', init_path)
+        actual_path = os.path.join(final_path, path)
+        pretrained_agent = pong_utils_cleaner.Policy().to(device)
+        pretrained_agent.load_state_dict(torch.load(actual_path, map_location=device))
 
     # we use the adam optimizer with learning rate 2e-4
     # optim.SGD is also possible
@@ -51,7 +61,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, generalising = F
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards, rewards_mask, time_od, fr1, fr2 = \
-            pong_utils_cleaner.collect_trajectories(envs, policy, R, r, tmax=tmax)
+            pong_utils_cleaner.collect_trajectories(envs, policy, R, r, randrew, tmax=tmax, preagent=pretrained_agent)
 
         if curriculum:
             if np.mean(rewards_mask) >= 0.8:
