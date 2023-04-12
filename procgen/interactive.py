@@ -111,10 +111,6 @@ def main():
         help="use monochromatic rectangles instead of human designed assets",
     )
 
-    parser.add_argument(
-        "--agent-health", type=int, help="number of hits the agent can take in bossfight2"
-    )
-
     args = parser.parse_args()
 
     kwargs = {
@@ -124,7 +120,6 @@ def main():
         "use_backgrounds": not args.disable_backgrounds,
         "restrict_themes": args.restrict_themes,
         "use_monochrome_assets": args.use_monochrome_assets,
-        "agent_health": args.agent_health,
     }
     if args.env_name != "coinrun_old":
         kwargs["distribution_mode"] = args.distribution_mode
