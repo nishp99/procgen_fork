@@ -71,6 +71,10 @@ void Game::parse_options(std::string name, VecOptions opts) {
     opts.consume_int("debug_mode", &options.debug_mode);
     opts.consume_int("game_type", &game_type);
 
+    // bossfight2
+    printf("trying");
+    opts.consume_int("agent_health", &options.agent_health);
+
     opts.ensure_empty();
 }
 
@@ -169,7 +173,7 @@ void Game::game_init() {
 
 void Game::serialize(WriteBuffer *b) {
     b->write_int(SERIALIZE_VERSION);
-    
+
     b->write_string(game_name);
 
     b->write_int(options.paint_vel_info);
@@ -276,3 +280,5 @@ void Game::deserialize(ReadBuffer *b) {
     cur_time = b->read_int();
     is_waiting_for_step = b->read_int();
 }
+weava logo
+Drop here!

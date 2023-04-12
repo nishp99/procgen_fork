@@ -14,6 +14,7 @@ MAX_STATE_SIZE = 2 ** 20
 ENV_NAMES = [
     "bigfish",
     "bossfight",
+    "bossfight2",
     "caveflyer",
     "chaser",
     "climber",
@@ -69,19 +70,20 @@ class BaseProcgenEnv(CEnv):
     """
 
     def __init__(
-        self,
-        num,
-        env_name,
-        options,
-        debug=False,
-        rand_seed=None,
-        num_levels=0,
-        start_level=0,
-        use_sequential_levels=False,
-        debug_mode=0,
-        resource_root=None,
-        num_threads=4,
-        render_mode=None,
+            self,
+            num,
+            env_name,
+            options,
+            debug=False,
+            rand_seed=None,
+            num_levels=0,
+            start_level=0,
+            use_sequential_levels=False,
+            debug_mode=0,
+            resource_root=None,
+            num_threads=4,
+            render_mode=None,
+            agent_health=1
     ):
         if resource_root is None:
             resource_root = os.path.join(SCRIPT_DIR, "data", "assets") + os.sep
@@ -89,13 +91,13 @@ class BaseProcgenEnv(CEnv):
 
         lib_dir = os.path.join(SCRIPT_DIR, "data", "prebuilt")
         if os.path.exists(lib_dir):
-            assert any([os.path.exists(os.path.join(lib_dir, name)) for name in ["libenv.so", "libenv.dylib", "env.dll"]]), "package is installed, but the prebuilt environment library is missing"
+            assert any([os.path.exists(os.path.join(lib_dir, name)) for name in ["libenv.so", "libenv.dylib",
+                                                                                 "env.dll"]]), "package is installed, but the prebuilt environment library is missing"
             assert not debug, "debug has no effect for pre-compiled library"
         else:
             # only compile if we don't find a pre-built binary
-            lib_dir = os.path.join(SCRIPT_DIR, ".build", "relwithdebinfo")
-            #lib_dir = build(debug=debug)
-        
+            lib_dir = build(debug=debug)
+
         self.combos = self.get_combos()
 
         if render_mode is None:
@@ -121,6 +123,7 @@ class BaseProcgenEnv(CEnv):
                 "render_human": render_human,
                 # these will only be used the first time an environment is created in a process
                 "resource_root": resource_root,
+                "agent_health": agent_health
             }
         )
 
@@ -205,26 +208,27 @@ class ProcgenGym3Env(BaseProcgenEnv):
     """
     gym3 interface for Procgen
     """
+
     def __init__(
-        self,
-        num,
-        env_name,
-        center_agent=True,
-        use_backgrounds=True,
-        use_monochrome_assets=False,
-        restrict_themes=False,
-        use_generated_assets=False,
-        paint_vel_info=False,
-        distribution_mode="hard",
-        **kwargs,
+            self,
+            num,
+            env_name,
+            center_agent=True,
+            use_backgrounds=True,
+            use_monochrome_assets=False,
+            restrict_themes=False,
+            use_generated_assets=False,
+            paint_vel_info=False,
+            distribution_mode="hard",
+            **kwargs,
     ):
         assert (
-            distribution_mode in DISTRIBUTION_MODE_DICT
+                distribution_mode in DISTRIBUTION_MODE_DICT
         ), f'"{distribution_mode}" is not a valid distribution mode.'
 
         if distribution_mode == "exploration":
             assert (
-                env_name in EXPLORATION_LEVEL_SEEDS
+                    env_name in EXPLORATION_LEVEL_SEEDS
             ), f"{env_name} does not support exploration mode"
 
             distribution_mode = DISTRIBUTION_MODE_DICT["hard"]
@@ -236,22 +240,23 @@ class ProcgenGym3Env(BaseProcgenEnv):
             distribution_mode = DISTRIBUTION_MODE_DICT[distribution_mode]
 
         options = {
-                "center_agent": bool(center_agent),
-                "use_generated_assets": bool(use_generated_assets),
-                "use_monochrome_assets": bool(use_monochrome_assets),
-                "restrict_themes": bool(restrict_themes),
-                "use_backgrounds": bool(use_backgrounds),
-                "paint_vel_info": bool(paint_vel_info),
-                "distribution_mode": distribution_mode,
-            }
+            "center_agent": bool(center_agent),
+            "use_generated_assets": bool(use_generated_assets),
+            "use_monochrome_assets": bool(use_monochrome_assets),
+            "restrict_themes": bool(restrict_themes),
+            "use_backgrounds": bool(use_backgrounds),
+            "paint_vel_info": bool(paint_vel_info),
+            "distribution_mode": distribution_mode,
+        }
         super().__init__(num, env_name, options, **kwargs)
-        
-        
+
+
 class ToBaselinesVecEnv(gym3.ToBaselinesVecEnv):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second' : 15
+        'video.frames_per_second': 15
     }
+
     def render(self, mode="human"):
         info = self.env.get_info()[0]
         _, ob, _ = self.env.observe()
@@ -259,7 +264,7 @@ class ToBaselinesVecEnv(gym3.ToBaselinesVecEnv):
             if "rgb" in info:
                 return info["rgb"]
             else:
-                return ob['rgb'][0]        
+                return ob['rgb'][0]
 
 
 def ProcgenEnv(num_envs, env_name, **kwargs):
