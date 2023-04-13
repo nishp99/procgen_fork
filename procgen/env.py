@@ -96,7 +96,8 @@ class BaseProcgenEnv(CEnv):
             assert not debug, "debug has no effect for pre-compiled library"
         else:
             # only compile if we don't find a pre-built binary
-            lib_dir = build(debug=debug)
+            lib_dir = os.path.join(SCRIPT_DIR, ".build", "relwithdebinfo")
+            #lib_dir = build(debug=debug)
 
         self.combos = self.get_combos()
 
