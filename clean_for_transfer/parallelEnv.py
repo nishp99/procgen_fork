@@ -126,10 +126,10 @@ def worker(remote, parent_remote, env_fn_wrapper):
 
 class parallelEnv(VecEnv):
     def __init__(self, env_name='PongDeterministic-v4',
-                 n=4, seed=None,
+                 n=4, seed=None, repeat_prob=0,
                  spaces=None):
 
-        env_fns = [gym.make(env_name) for _ in range(n)]
+        env_fns = [gym.make(env_name, repeat_action_probability=repeat_prob) for _ in range(n)]
 
         if seed is not None:
             for i, e in enumerate(env_fns):
