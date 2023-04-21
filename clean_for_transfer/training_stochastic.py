@@ -46,7 +46,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, randrew = True, 
     optimizer = optim.Adam(policy.parameters(), lr=1e-4)
 
     # initialize environment
-    envs = parallelEnv('PongDeterministic-v4', n=n, seed=1234, repeat_action_probability=0.2)
+    envs = parallelEnv('PongDeterministic-v4', n=n, seed=1234, repeat_prob=0.2)
 
     path = os.path.join(experiment_path, folder_name)
     os.makedirs(path, exist_ok=True)
