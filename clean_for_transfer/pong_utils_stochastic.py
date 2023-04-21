@@ -106,7 +106,7 @@ def collect_trajectories(envs, policy, R, ratio, randrew = False, tmax=200, nran
     envs.step([1] * n)
 
     # perform nrand random steps
-    pre_steps = rand.randint(0,20)
+    pre_steps = rand.randint(1,21)
     for _ in range(pre_steps):
         fr1, re1, _, _ = envs.step(np.random.choice([RIGHT, LEFT], n))
         fr2, re2, _, _ = envs.step([0] * n)
