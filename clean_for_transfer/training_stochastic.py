@@ -21,6 +21,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, randrew = True, 
     device = pong_utils_stochastic.device
     print(torch.cuda.is_available())
     print(device)
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     print(torch.cuda.device_count())
     policy = pong_utils_stochastic.Policy().to(device)
 
