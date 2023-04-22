@@ -21,24 +21,72 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, randrew = True, 
 
     policy = pong_utils_stochastic.Policy().to(device)
 
+    agents = []
     #load pretrained agent
     pretrained_agent = None
     if preagent:
-        """init_folder = 't75eps10000n16'
+        init_folder = 't50eps14000n20trial0'
         path = os.path.join(init_folder, 'model.pt')
-        init_path = os.path.join('pong_upgraded', '202304-0313-0328')
+        init_path = os.path.join('pong_stochastic', '202304-2110-1000')
         final_path = os.path.join('results', init_path)
         actual_path = os.path.join(final_path, path)
         pretrained_agent = pong_utils_stochastic.Policy().to(device)
-        pretrained_agent.load_state_dict(torch.load(actual_path, map_location=device))"""
+        pretrained_agent.load_state_dict(torch.load(actual_path, map_location=device))
+        agents.append(pretrained_agent)
 
-        init_folder_1 = 't110eps15000n20trial0'
+        init_folder_1 = 't40eps14000n20trial1'
         path_1 = os.path.join(init_folder_1, 'model.pt')
-        init_path_1 = os.path.join('pong_randreward_preagent_gen', '202304-1622-5321')
+        init_path_1 = os.path.join('pong_stochastic', '202304-2110-1000')
         final_path_1 = os.path.join('results', init_path_1)
         actual_path_1 = os.path.join(final_path_1, path_1)
         pretrained_agent_1 = pong_utils_stochastic.Policy().to(device)
         pretrained_agent_1.load_state_dict(torch.load(actual_path_1, map_location=device))
+        agents.append(pretrained_agent_1)
+
+        init_folder_2 = 't60eps14000n20trial0'
+        path_2 = os.path.join(init_folder_2, 'model.pt')
+        init_path_2 = os.path.join('pong_stochastic', '202304-2110-1000')
+        final_path_2 = os.path.join('results', init_path_2)
+        actual_path_2 = os.path.join(final_path_2, path_2)
+        pretrained_agent_2 = pong_utils_stochastic.Policy().to(device)
+        pretrained_agent_2.load_state_dict(torch.load(actual_path_2, map_location=device))
+        agents.append(pretrained_agent_2)
+
+        init_folder_3 = 't60eps14000n20trial1'
+        path_3 = os.path.join(init_folder_3, 'model.pt')
+        init_path_3 = os.path.join('pong_stochastic', '202304-2110-1000')
+        final_path_3 = os.path.join('results', init_path_3)
+        actual_path_3 = os.path.join(final_path_3, path_3)
+        pretrained_agent_3 = pong_utils_stochastic.Policy().to(device)
+        pretrained_agent_3.load_state_dict(torch.load(actual_path_3, map_location=device))
+        agents.append(pretrained_agent_3)
+
+        init_folder_4 = 't70eps14000n20trial1'
+        path_4 = os.path.join(init_folder_4, 'model.pt')
+        init_path_4 = os.path.join('pong_stochastic', '202304-2110-1000')
+        final_path_4 = os.path.join('results', init_path_4)
+        actual_path_4 = os.path.join(final_path_4, path_4)
+        pretrained_agent_4 = pong_utils_stochastic.Policy().to(device)
+        pretrained_agent_4.load_state_dict(torch.load(actual_path_4, map_location=device))
+        agents.append(pretrained_agent_4)
+
+        init_folder_5 = 't80eps14000n20trial1'
+        path_5 = os.path.join(init_folder_5, 'model.pt')
+        init_path_5 = os.path.join('pong_stochastic', '202304-2110-1000')
+        final_path_5 = os.path.join('results', init_path_5)
+        actual_path_5 = os.path.join(final_path_5, path_5)
+        pretrained_agent_5 = pong_utils_stochastic.Policy().to(device)
+        pretrained_agent_5.load_state_dict(torch.load(actual_path_5, map_location=device))
+        agents.append(pretrained_agent_5)
+
+        init_folder_6 = 't90eps14000n20trial1'
+        path_6 = os.path.join(init_folder_6, 'model.pt')
+        init_path_6 = os.path.join('pong_stochastic', '202304-2110-1000')
+        final_path_6 = os.path.join('results', init_path_6)
+        actual_path_6 = os.path.join(final_path_6, path_6)
+        pretrained_agent_6 = pong_utils_stochastic.Policy().to(device)
+        pretrained_agent_6.load_state_dict(torch.load(actual_path_6, map_location=device))
+        agents.append(pretrained_agent_6)
 
     # we use the adam optimizer with learning rate 2e-4
     # optim.SGD is also possible
@@ -69,7 +117,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, randrew = True, 
     for e in range(episode):
         # collect trajectories
         old_probs, states, actions, rewards, rewards_mask, time_od, fr1, fr2 = \
-            pong_utils_stochastic.collect_trajectories(envs, policy, R, r, randrew, tmax=tmax, preagent=pretrained_agent)
+            pong_utils_stochastic.collect_trajectories(envs, policy, R, r, randrew, tmax=tmax, preagents=agents)
 
         if curriculum:
             if np.mean(rewards_mask) >= 0.8:
