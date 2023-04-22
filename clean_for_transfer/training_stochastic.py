@@ -17,8 +17,9 @@ policy = pong_utils_cleaner.Policy().to(device)
 # optim.SGD is also possible"""
 
 def train(episode, R, r, n, tmax, experiment_path, folder_name, randrew = True, preagent = False, generalising=False, curriculum=False, save_model=False):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     device = pong_utils_stochastic.device
-
+    print(device)
     policy = pong_utils_stochastic.Policy().to(device)
 
     agents = []
