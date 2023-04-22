@@ -20,6 +20,7 @@ def train(episode, R, r, n, tmax, experiment_path, folder_name, randrew = True, 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     device = pong_utils_stochastic.device
     print(device)
+    print(torch.cuda.device_count())
     policy = pong_utils_stochastic.Policy().to(device)
 
     agents = []
