@@ -1,5 +1,5 @@
 import gym3
-from gym import types_np
+from gym3 import types_np
 import numpy as np
 import os
 from procgen import ProcgenGym3Env
